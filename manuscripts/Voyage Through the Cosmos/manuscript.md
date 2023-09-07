@@ -1,3 +1,8 @@
+# Voyage Through the Cosmos: A Space Odyssey
+## Journey to the Edges of Reality
+### Marko T. Manninen
+#### This manuscript is a work of fiction. Any resemblance to actual persons, living or dead, or actual events is purely coincidental.
+
 # Prologue
 
 In a universe governed by laws that defied human comprehension, the Artemis III was a testament to the audacity of human imagination. Suspended in the ink-black void of deep space, its engines hummed with a celestial melody, and its hull gleamed with the radiance of a thousand stars. This was no ordinary spacecraft; it was a symphony of science and engineering, a pinnacle of human achievement.
