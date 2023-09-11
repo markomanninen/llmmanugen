@@ -26,10 +26,10 @@ The Manuscript class also provides options for exporting the manuscript into var
 
 Below is the initialization prompt for copy & paste:
 
+---PROMPT BEGINS BELOW---
+
 ```
 First, generate and execute Python code from the pseudo-class description. Use compact/minimal naming conventions in method code blocks. Then, follow the wizard.
-
-```pseudocode
 
 class Manuscript
 
@@ -175,8 +175,6 @@ class Manuscript
                         return _(section children field, remaining fields slice from second, local path)
         _(data children field, field values)
 
-\```
-
 ## WIZARD
 
 ### User guide
@@ -213,6 +211,8 @@ _Note: The list can be traversed multiple times, each time adding more data to s
 
 Start by creating the Manuscript class and then follow the wizard.
 ```
+
+---PROMPT ENDS ABOVE---
 
 The rest is basically following the instruction and step-by-step guide wizarded by ChatGPT.
 
