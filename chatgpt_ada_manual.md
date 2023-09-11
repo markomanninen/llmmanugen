@@ -326,7 +326,7 @@ With these steps, you'll be well-equipped to utilize all features of LLMManuGen,
 ### Specific Technical Issues
 #### 6. Initial Prompt Malfunction
 **Problem**: The pseudo-code does not yield the correct Python code.
-**Solution**: If pseudo-class generation fails, you can remove the search methods to shorten the class or replace the pseudocode with native Python code from the GitHub project: GitHub Repo.
+**Solution**: If pseudo-class generation fails, you can remove the search methods to shorten the class or replace the pseudocode with native Python code from the GitHub project: [LLMManuGen](https://github.com/markomanninen/llmmanugen).
 
 #### 7. Navigation Difficulties
 **Problem**: Trouble navigating through the hierarchical structure, especially for complex manuscripts.
@@ -338,7 +338,7 @@ With these steps, you'll be well-equipped to utilize all features of LLMManuGen,
 
 #### 9. Version Compatibility
 **Problem**: Issues arising from using LLMManuGen with different versions of ChatGPT or ADA.
-**Solution**: There is no quick solution to this. If ChatGPT or ADA changes over time, the code generation and prompt execution may fail. One just needs to figure out relevant changes to the initial prompt or see the GitHub repo for possible updates.
+**Solution**: There is no quick solution to this. If ChatGPT or ADA changes over time, the code generation and prompt execution may fail. One just needs to figure out relevant changes to the initial prompt or see the [GitHub repo](https://github.com/markomanninen/llmmanugen) for possible updates.
 # FAQ
 #### 1. What is LLMManuGen?
 LLMManuGen is a tool that extends the capabilities of ChatGPT and the Advanced Data Analysis plug-in, allowing for more structured and persistent content generation and management.
