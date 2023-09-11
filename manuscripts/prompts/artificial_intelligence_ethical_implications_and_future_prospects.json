@@ -1,0 +1,51 @@
+{
+    "title": "Artificial Intelligence: Ethical Implications and Future Prospects",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Interactive Digital Essay",
+        "general": "Incorporate multimedia elements like videos or interactive graphs; Blend academic and journalistic styles; Make use of first-person interviews.",
+        "section_length": "3500-5500 characters",
+        "tone": "Inquisitive and analytical; Aim to challenge conventional thinking."
+    },
+    "constraints": {
+        "structure": "Paragraphs should be short and digestible; Use sidebars for additional information; No footnotes, but inline citations are encouraged.",
+        "blacklist_phrases": "To be honest; Frankly speaking; All in all",
+        "additional": "Include at least one real-world example per section; Make use of subheadings within sections."
+    },
+    "sections": [
+        {
+            "title": "Introduction",
+            "prompt": "Set the stage by discussing the growing role of AI and why ethical considerations are becoming more pertinent."
+        },
+        {
+            "title": "Ethical Dilemmas",
+            "prompt": "Delve into specific ethical issues tied to AI development and deployment. Use real-world examples."
+        },
+        {
+            "title": "Data Privacy",
+            "prompt": "Discuss how AI affects data privacy. Include first-person interviews from experts in the field."
+        },
+        {
+            "title": "Economic Impact",
+            "prompt": "Analyze the economic consequences of AI, focusing on job displacement and wealth inequality."
+        },
+        {
+            "title": "Regulatory Frameworks",
+            "prompt": "Evaluate the current regulatory landscape for AI. Are existing laws sufficient?"
+        },
+        {
+            "title": "Global Perspectives",
+            "prompt": "How do different countries approach the ethical implications of AI? Include case studies."
+        },
+        {
+            "title": "Future Scenarios",
+            "prompt": "Speculate on future ethical challenges and potential solutions. Use multimedia elements for enhanced engagement."
+        },
+        {
+            "title": "Conclusion",
+            "prompt": "Summarize the key takeaways and offer actionable insights for both policymakers and the general public."
+        }
+    ]
+}

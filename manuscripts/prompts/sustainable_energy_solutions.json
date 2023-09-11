@@ -1,0 +1,51 @@
+{
+    "title": "Sustainable Energy Solutions: A Path Forward - Engineering a Greener Tomorrow",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Whitepaper",
+        "general": "Incorporate engineering blueprints; Cite legislation and policy documents; Provide real-world examples.",
+        "section_length": "3500-6000 characters",
+        "tone": "Optimistic yet critical; Focus on actionable insights."
+    },
+    "constraints": {
+        "structure": "Use charts and graphs; Include an executive summary; No FAQs.",
+        "blacklist_phrases": "To put it bluntly; Needless to say; Trust me",
+        "additional": "Avoid greenwashing; Be transparent about limitations and challenges; Use footnotes sparingly."
+    },
+    "sections": [
+        {
+            "title": "Executive Summary",
+            "prompt": "Provide a brief overview of the sustainable energy landscape and the focus of this whitepaper."
+        },
+        {
+            "title": "Introduction",
+            "prompt": "Introduce the current state of global energy consumption and the need for sustainable solutions."
+        },
+        {
+            "title": "Types of Sustainable Energy",
+            "prompt": "Discuss various forms of sustainable energy like solar, wind, and hydro. Include engineering blueprints."
+        },
+        {
+            "title": "Policy and Legislation",
+            "prompt": "Review current policies and legislation that are shaping the sustainable energy sector."
+        },
+        {
+            "title": "Case Studies",
+            "prompt": "Analyze real-world examples of sustainable energy projects, focusing on their strengths and weaknesses."
+        },
+        {
+            "title": "Challenges and Limitations",
+            "prompt": "Address the challenges and limitations of implementing sustainable energy solutions."
+        },
+        {
+            "title": "Future Prospects",
+            "prompt": "Examine emerging technologies and trends that could shape the future of sustainable energy."
+        },
+        {
+            "title": "Conclusion",
+            "prompt": "Summarize the findings and offer actionable insights for stakeholders."
+        }
+    ]
+}

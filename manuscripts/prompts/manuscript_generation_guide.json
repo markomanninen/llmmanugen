@@ -1,0 +1,49 @@
+{
+    "title": "LLMManuGen: Structured Manuscript Generation",
+    "subtitle": "A Comprehensive Guide",
+    "author": "Marko T. Manninen",
+    "disclaimer": "Content is A.I. generated for demonstration purposes. This document is for conceptual understanding only.",
+    "guidelines": {
+        "format": "Technical Manual",
+        "general": "Use clear, precise language; Include code snippets where applicable; Provide examples;",
+        "section_length": "2000-4000 characters"
+    },
+    "constraints": {
+        "structure": "Use headings for sections and sub-sections; No bullet points; use full sentences;",
+        "blacklist_phrases": "To sum up; To conclude; Basically; In a nutshell;"
+    },
+    "sections": [
+        {
+            "title": "Introduction",
+            "prompt": "Provide an overview of LLMManuGen and its capabilities."
+        },
+        {
+            "title": "Installation and Setup",
+            "prompt": "Describe how to install and configure LLMManuGen."
+        },
+        {
+            "title": "Core Features",
+            "prompt": "Discuss the main functionalities of LLMManuGen."
+        },
+        {
+            "title": "Usage Scenarios",
+            "prompt": "Explain common use-cases where LLMManuGen is particularly useful."
+        },
+        {
+            "title": "Troubleshooting",
+            "prompt": "Provide solutions for common issues that users may encounter."
+        },
+        {
+            "title": "Future Developments",
+            "prompt": "Share what future updates or features are planned for LLMManuGen."
+        },
+        {
+            "title": "Acknowledgments",
+            "prompt": "Recognize contributions and provide references."
+        },
+        {
+            "title": "Appendix",
+            "prompt": "Include any supplementary material like code snippets, tables, or diagrams."
+        }
+    ]
+}

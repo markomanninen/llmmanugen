@@ -1,0 +1,51 @@
+{
+    "title": "Mental Health in the Digital Age: An In-Depth Exploration",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Long-form Investigative Report",
+        "general": "Incorporate various perspectives, from healthcare professionals to patients; Use charts or graphs to summarize complex data; Interviews are encouraged.",
+        "section_length": "4000-6000 characters",
+        "tone": "Empathetic and respectful; Prioritize the human aspect of each issue."
+    },
+    "constraints": {
+        "structure": "Each section should have a clear narrative arc; Use pull quotes to highlight key points; No bullet points.",
+        "blacklist_phrases": "Needless to say; Obviously; Trust me",
+        "additional": "Ensure that statistics are up-to-date; Use at least one case study per section; Keep language accessible."
+    },
+    "sections": [
+        {
+            "title": "Introduction",
+            "prompt": "Present the importance of discussing mental health in the context of digital technology."
+        },
+        {
+            "title": "The Social Media Paradox",
+            "prompt": "Explore the dichotomy of social media as both a connector and a stressor. Use case studies."
+        },
+        {
+            "title": "Screen Time and Mental Well-Being",
+            "prompt": "Discuss the relationship between excessive screen time and mental well-being. Use charts or graphs."
+        },
+        {
+            "title": "Online Communities and Support",
+            "prompt": "Analyze how online communities can serve as support systems but also perpetuate harmful behaviors."
+        },
+        {
+            "title": "The Role of Big Tech",
+            "prompt": "Examine the responsibility of tech companies in fostering or mitigating mental health issues."
+        },
+        {
+            "title": "Digital Therapeutics",
+            "prompt": "Evaluate the effectiveness of digital platforms designed to improve mental health."
+        },
+        {
+            "title": "Policy and Regulation",
+            "prompt": "Discuss existing policies related to mental health and digital technology. What more needs to be done?"
+        },
+        {
+            "title": "Conclusion",
+            "prompt": "Summarize the key points and suggest actionable steps for various stakeholders."
+        }
+    ]
+}

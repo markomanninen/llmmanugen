@@ -1,0 +1,51 @@
+{
+    "title": "Space Exploration: The Final Frontier - Pioneering Our Cosmic Neighborhood",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Popular Science Book",
+        "general": "Include interviews with experts; Incorporate historical context; Use vivid imagery and storytelling.",
+        "section_length": "5000-8000 characters",
+        "tone": "Engaging and inspiring; Blend scientific rigor with poetic license."
+    },
+    "constraints": {
+        "structure": "Feel free to use sidebars and callouts; Employ footnotes for additional context; No more than three exclamation marks throughout.",
+        "blacklist_phrases": "To infinity and beyond; It's not rocket science; A whole new world",
+        "additional": "Avoid anthropocentrism; Make sure to address the ethical considerations of space exploration; Use layman's terms where possible."
+    },
+    "sections": [
+        {
+            "title": "Foreword",
+            "prompt": "Introduce the reader to the grandeur and mystery of the cosmos, setting the tone for the book."
+        },
+        {
+            "title": "Humanity's Cosmic Journey",
+            "prompt": "Narrate the chronology of space exploration from early astronomers to modern missions."
+        },
+        {
+            "title": "The Rocket Science",
+            "prompt": "Explain the technological advancements that have made space travel possible."
+        },
+        {
+            "title": "Profiles in Courage",
+            "prompt": "Provide biographies of key figures in the history of space exploration."
+        },
+        {
+            "title": "Ethical Frontiers",
+            "prompt": "Discuss the moral and ethical considerations of venturing into space."
+        },
+        {
+            "title": "New Worlds, New Life?",
+            "prompt": "Explore the possibility of life on other planets and what that means for humanity."
+        },
+        {
+            "title": "The Next Big Leap",
+            "prompt": "Examine future missions, including Mars colonization and interstellar travel."
+        },
+        {
+            "title": "Afterword",
+            "prompt": "Reflect on what lies ahead for humanity in the realm of space exploration."
+        }
+    ]
+}

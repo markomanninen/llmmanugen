@@ -1,0 +1,51 @@
+{
+    "title": "Climate Change and Its Socioeconomic Impacts",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Narrative Academic Paper",
+        "general": "Incorporate storytelling elements to engage the reader; Use data visualizations where possible; Cite a mix of traditional academic and modern digital sources.",
+        "section_length": "4500-6500 characters",
+        "tone": "Informative yet compelling; Prioritize clarity over complexity."
+    },
+    "constraints": {
+        "structure": "Avoid using subheadings within sections; No bullet points; Use hyperlinks instead of footnotes.",
+        "blacklist_phrases": "Needless to say; Let's face it; At the end of the day",
+        "additional": "Use at least one quote from an expert in each section; Avoid passive voice."
+    },
+    "sections": [
+        {
+            "title": "Introduction",
+            "prompt": "Introduce the interconnectedness of climate change and socioeconomic factors. Set the stage for the paper."
+        },
+        {
+            "title": "The Science Behind Climate Change",
+            "prompt": "Delve into the scientific evidence supporting climate change. How does it lead to socioeconomic disparities?"
+        },
+        {
+            "title": "Socioeconomic Vulnerabilities",
+            "prompt": "Discuss the populations most vulnerable to climate change and why. Include data and expert quotes."
+        },
+        {
+            "title": "Economic Ramifications",
+            "prompt": "Explore the economic impacts of climate change. How does it perpetuate a cycle of poverty and inequality?"
+        },
+        {
+            "title": "Policy and Governance",
+            "prompt": "Examine existing policies aimed at mitigating climate change. Are they inclusive of socioeconomic considerations?"
+        },
+        {
+            "title": "Case Studies",
+            "prompt": "Include 2-3 case studies to illustrate the real-world effects of climate change on socioeconomic conditions."
+        },
+        {
+            "title": "Future Outlook",
+            "prompt": "Speculate on future scenarios. What steps can be taken to ensure a more equitable response to climate change?"
+        },
+        {
+            "title": "Conclusion",
+            "prompt": "Synthesize the key insights from the paper. Offer a call to action for researchers and policymakers."
+        }
+    ]
+}

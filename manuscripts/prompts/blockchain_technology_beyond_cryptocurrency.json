@@ -1,0 +1,51 @@
+{
+    "title": "Blockchain Technology: Beyond Cryptocurrency - A Multidisciplinary Analysis",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Comprehensive Review",
+        "general": "Incorporate expert interviews; Use diagrams to explain complex structures; Provide real-world examples.",
+        "section_length": "3500-4500 characters",
+        "tone": "Inquisitive yet informative; Maintain a balance between technicality and readability."
+    },
+    "constraints": {
+        "structure": "Avoid subheadings within sections; Use footnotes for supplementary information; Stick to a logical flow.",
+        "blacklist_phrases": "Let's face it; At the end of the day; It's a no-brainer",
+        "additional": "Cite primary research articles; Avoid hype and sensationalism; Use a neutral standpoint."
+    },
+    "sections": [
+        {
+            "title": "Introduction",
+            "prompt": "Set the stage for the multidisciplinary analysis of blockchain technology beyond its cryptocurrency applications."
+        },
+        {
+            "title": "Blockchain Fundamentals",
+            "prompt": "Demystify the foundational elements and architecture of blockchain. Use diagrams."
+        },
+        {
+            "title": "Finance and Banking",
+            "prompt": "Investigate the impact of blockchain on traditional finance and banking sectors. Include expert interviews."
+        },
+        {
+            "title": "Supply Chain Management",
+            "prompt": "Discuss how blockchain revolutionizes supply chain management with its transparency and traceability."
+        },
+        {
+            "title": "Healthcare",
+            "prompt": "Examine the role of blockchain in healthcare, focusing on patient data management and drug traceability."
+        },
+        {
+            "title": "Legal and Ethical Implications",
+            "prompt": "Scrutinize the legal challenges and ethical considerations of blockchain adoption."
+        },
+        {
+            "title": "Future Prospects",
+            "prompt": "Predict the future applications of blockchain technology across multiple disciplines."
+        },
+        {
+            "title": "Conclusion",
+            "prompt": "Compile the key findings and suggest areas for further research and development."
+        }
+    ]
+}

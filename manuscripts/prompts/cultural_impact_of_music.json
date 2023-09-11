@@ -1,0 +1,51 @@
+{
+    "title": "Cultural Impact of Music: A Global Perspective - A Sonic Journey",
+    "subtitle": "",
+    "author": "Marko T. Manninen",
+    "disclaimer": "This document is AI-generated and for informational purposes only.",
+    "guidelines": {
+        "format": "Explorative Essay",
+        "general": "Incorporate sound samples; Use ethnographic studies as references; Offer examples from diverse cultures.",
+        "section_length": "2500-4000 characters",
+        "tone": "Explorative and insightful; Leverage the emotional power of music."
+    },
+    "constraints": {
+        "structure": "Allow poetic language; Use sidebars for cultural facts; Maintain a narrative thread.",
+        "blacklist_phrases": "To put it simply; Needless to say; As everyone knows",
+        "additional": "Avoid cultural stereotypes; Do not overgeneralize; Be mindful of cultural sensitivities."
+    },
+    "sections": [
+        {
+            "title": "Introduction",
+            "prompt": "Introduce the reader to the universal language of music and its cultural implications."
+        },
+        {
+            "title": "Rhythm and Ritual",
+            "prompt": "Explore how rhythm is used in various cultural rituals around the world. Include sound samples."
+        },
+        {
+            "title": "Melody and Emotion",
+            "prompt": "Discuss the emotional impact of melody, supported by examples from diverse musical traditions."
+        },
+        {
+            "title": "Lyrics and Language",
+            "prompt": "Investigate the role of lyrics in conveying cultural stories, values, and identities."
+        },
+        {
+            "title": "Musical Instruments and Innovation",
+            "prompt": "Delve into the evolution of musical instruments and their significance in cultural expression."
+        },
+        {
+            "title": "Music and Social Change",
+            "prompt": "Analyze the role of music in social movements and cultural revolutions."
+        },
+        {
+            "title": "The Digital Age",
+            "prompt": "Examine how digital platforms are changing the way we experience and share music across cultures."
+        },
+        {
+            "title": "Conclusion",
+            "prompt": "Reflect on the journey through the world of music and its cultural impacts. Sum up the insights gained."
+        }
+    ]
+}
