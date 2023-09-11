@@ -1,0 +1,185 @@
+First, generate and execute Python code from the pseudo-class description. Use compact/minimal naming conventions in method code blocks. Then, follow the wizard.
+
+```pseudocode
+
+class Manuscript
+
+    init(data dictionary, title field is "title", children field is "sections")
+        set title and children fields as class attributes
+        data = data dictionary
+        data set children field to empty list by default if not exist
+        validate_schema(data)
+        reset_current_section_path()
+
+    validate_schema(schema)
+        _(schema)
+            if schema is not dictionary -> False
+            if title field is not in schema or is empty -> False
+            if children field in schema
+                if schema children field is not list -> False
+                for child in schema children field
+                    if not _(child) -> False
+            True
+        if not _(schema)
+            raise ValueError
+        True
+
+    reset_current_section_path(path indices None by default)
+        current path = path indices or first key of data sections as initial path
+
+    get_section(path indices)
+        section = data children field
+        for index in path indices
+            try
+                if children field in section
+                   section = section children field
+                section = section index
+            except
+                None
+        section
+
+    get_current_section()
+        get_section(current path)
+
+    get_current_and_next_sections(without children is true)
+        current section = get_current_section()
+        temporary path = current path copy
+        next section = None
+        if move_to_next_section() is "continue"
+            next section = get_current_section()
+        current path = temporary path
+        current section without children field if without children, next section without children field if without children
+
+    move_to_next_section()
+        section = data children field
+        path = current path copy
+        for index in path except last item
+            section = section index children field
+        if children field in section path last index and section path last index children field
+            current path append 0
+            "continue"
+        if section length > path last index + 1
+            increment current path last index
+            "continue"
+        else
+            while current path length > 1
+                current path pop
+                sections = data children field
+                for index in current path except last item
+                    sections = sections index children field
+                if sections length > current path last index + 1
+                    increment current path last index
+                    "continue"
+            else
+                "end"
+        "continue"
+
+    add_current_content(content dictionary)
+        if current section is get_current_section()
+            remove possible children field from content dictionary copy
+            update current section with content dictionary
+
+    static from_json(file path)
+        Manuscript(json load file path)
+
+    to_json(optional directory)
+        validate_schema(data)
+        if directory does not exists
+            make directory
+        write data to json string to safe filename in directory
+        safe filename, data to json string
+
+    get_safe_filename(extension)
+        title = data title field or "Untitled" + "_"  + datetime now
+        remove all except alphanumeric from title with spaces replaced with underscore + extension
+
+    get_table_of_contents(tree structure is true)
+        current section = get_current_section()
+        current title = current section title field
+        _(sections, level, prefix is empty)
+            for i, section in sections
+                is_last = if i is sections length - 1
+                if tree structure
+                    new prefix = if is_last then "└── " else "├── "
+                    spacer = if is_last then "    " else "│   "
+                else
+                    new prefix = empty
+                    spacer = "  " times (level - 1)
+                toc append prefix + new prefix + section title field with "*" if section title field is current title
+                if section child field
+                    add toc _(section child field, level + 1, prefix + spacer)
+        _(data children field, level 1)
+        toc string
+
+    to_md(optional content field, optional directory)
+        _(subsection, level)
+            for section in subsection
+                markdown add "#" times level + space + section title field
+                if content field
+                    markdown add (section content field or "Section content not present for the field: " + content field) wrapped with linebreaks
+                markdown add _(section children field, level + 1)
+        _(data children field, level 1)
+        write markdown string to safe filename in directory
+        safe filename, markdown string
+
+    search(query as string or regex, optional field, optional path)
+        search field = field or title field
+        _(sections, new path is empty list)
+            for i, section in sections
+                local path = new path + [i]
+                if (search field in section and regex query or string query match in section search field) and
+                   (path is None or path is local path slice to path length)
+                    results add {children field: section, path: local path}
+                if children field in section
+                    _(section children field, local path)
+        _(data children field)
+        results
+
+    find_path_indices(field values)
+        _(subsections, remaining fields, new path is empty list)
+            for i, section in subsections
+                if section title field is first from remaining fields
+                    local path = new path + [i]
+                    if remaining fields length is 1
+                        return local path
+                    if children field in section
+                        return _(section children field, remaining fields slice from second, local path)
+        _(data children field, field values)
+
+```
+
+## WIZARD
+
+### User guide
+
+Purpose of the class: To extend vanilla ChatGPT functionality beyond the limitations of the token window. Enhanced functionality is achieved by using persistent memory in a Python environment for storing a hierarchical list of tasks/table of contents/etc. and traversing through them in a step-by-step manner. This enables the exact processing of content rather than eventually losing the reference point and list items, as vanilla ChatGPT does without persistent memory. The Manuscript class can upload and download JSON representation of the structured data, which makes it possible to continue traversal from any given point.
+
+_Note: This class gives basic functionality for hierarchical traverse of the tree-structured items and can be extended to give a more restricted form for the schema and specific manuscript generation._
+
+### Steps 1-7
+
+Give a small intro about the functionality of Manuscript class and the following steps. Then ask the user:
+
+1a. To upload existing JSON file. It must meet the minimal structure requirements -> output minimal example with mandatory title field and children field for nested structures.
+
+1b. To give a topic or table of contents. It is to generate a JSON data structure for the Manuscript class initialization.
+
+2a. Print the table of contents. Asterisk denotes the current section.
+
+2b. Ask from which section the user wants to start. Then traverse to the starting point.
+
+3. Get the current and next section. The latter indicates what is coming next at the iteration process, which enables building a more natural content bridge between sections.
+
+4. Ask what the user wants to do with the current section. For instance, store either user-given or LLM/GPT generated data to the section (children field excluded), might it be content, summary, prompt directives ({instructions, guidelines, constraints}), created/updated/completed datetime, etc. fields.
+
+5. Traverse to the next item in the list if not "end".
+
+6. Repeat steps 3-5
+
+_Note: The list can be traversed multiple times, each time adding more data to sections. At the end, the user should have a complete schema ready for MD output or exporting manuscript schema to the other application for the publication process._
+
+7. Generate JSON/MD files for download. JSON file can be used in an iterative way as re-input to the manuscript class. MD file is read-only.
+
+---
+
+Start by creating the Manuscript class and then follow the wizard.
