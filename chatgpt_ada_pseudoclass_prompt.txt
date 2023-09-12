@@ -29,6 +29,7 @@ class Manuscript
         True
 
     reset_current_section_path(path indices None by default)
+	    # Resets to the root without argument
         current path = path indices or first key of data sections as initial path
 
     get_section(path indices)
@@ -37,6 +38,7 @@ class Manuscript
             try
                 if children field in section
                    section = section children field
+				# It is important that if block is before the following set
                 section = section index
             except
                 None
@@ -54,18 +56,20 @@ class Manuscript
         current path = temporary path
         current section without children field if without children, next section without children field if without children
 
-    move_to_next_section()
+    move_to_next_section(optional only at the same level is false)
         section = data children field
         path = current path copy
         for index in path except last item
             section = section index children field
-        if children field in section path last index and section path last index children field
+        if not only at the same level and children field in section path last index and section path last index children field
             current path append 0
             "continue"
         if section length > path last index + 1
             increment current path last index
             "continue"
         else
+			if only at the same level:
+				"end"
             while current path length > 1
                 current path pop
                 sections = data children field
@@ -157,7 +161,7 @@ class Manuscript(Manuscript)
                         return _(section children field, remaining fields slice from second, local path)
         _(data children field, field values)
 
-Optional, if the user specifically requests: Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code.
+Optionally, if the user specifically accepts: Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code.
 
 ## WIZARD
 

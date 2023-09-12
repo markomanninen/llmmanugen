@@ -61,18 +61,21 @@ class Manuscript:
                 next_section = {k: v for k, v in next_section.items() if k != self.children_field}
         return current_section, next_section
 
-    def move_to_next_section(self):
+    def move_to_next_section(self, only_at_the_same_level=False):
         section = self.data[self.children_field]
         path = self.current_path.copy()
         for index in path[:-1]:
             section = section[index][self.children_field]
-        if self.children_field in section[path[-1]] and section[path[-1]][self.children_field]:
+        if not only_at_the_same_level and self.children_field in section[path[-1]] and section[path[-1]][self.children_field]:
             self.current_path.append(0)
             return "continue"
         if len(section) > path[-1] + 1:
             self.current_path[-1] += 1
             return "continue"
         else:
+			if only_at_the_same_level:
+				return "end"
+			
             while len(self.current_path) > 1:
                 self.current_path.pop()
                 sections = self.data[self.children_field]

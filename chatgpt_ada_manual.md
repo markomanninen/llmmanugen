@@ -4,29 +4,27 @@ Use with ChatGPT + Advanced Data Analysis plug-in (ADA) activated.
 
 # Introduction
 
-The LLMManuGen Manuscript class is designed to manage and traverse hierarchical data structures, such as a table of contents or a task list. While traversing through the tree, one can let GPT to generate content for each section in a controlled manner.
+The LLMManuGen Manuscript class is designed to manage and traverse hierarchical data structures, such as a table of contents or a task list. While traversing through the tree, one can let GPT to modify existing fields and generate new content for each section in a controlled manner.
 
-Manuscript class functions as a persistent memory extension for ChatGPT, overcoming the token limitations inherent to vanilla ChatGPT. By doing so, it ensures that the context is not lost during the content generation process, enabling more precise and organized output.
+Manuscript class functions as a persistent memory extension for ChatGPT, overcoming the token limitations inherent to vanilla ChatGPT. By doing so, it ensures that the context is not dissipated during the content generation process, enabling  precise and organized output.
 
 Core functionalities include the ability to move through the sections in a step-by-step manner, add content to each section, and export the entire structure into JSON or Markdown formats. The class also offers methods for searching specific sections and updating them with new content, providing a framework for text-based projects.
 
-The manual you are currently navigating serves as a guide to understanding and utilizing the Manuscript class. It covers basic installation and setup to features like content management and exporting options. The guide is structured into distinct sections, including Installation, Features, and Internal Workings, each designed to offer detailed insights into specific functionalities. Additionally, you'll find a Troubleshooting section to help resolve common issues, and a FAQ for quick answers to general queries.
+This manual serves as a guide to understanding and utilizing the Manuscript class. It covers basic "installation" and setup to features like content management and exporting options. The guide is structured into distinct sections, including Setup, Features, and Internal Workings, each designed to offer detailed insights into specific functionalities. Additionally, you'll find a Troubleshooting section to help resolve common issues, and a FAQ for quick answers to general queries.
 
-# Installation
+# Setup
 
-Utilizing LLMManuGen with ChatGPT and ADA (Advanced Data Analysis plug-in) doesn't require a traditional software installation. Instead, the process is initiated through a specific prompt mechanism designed to seamlessly integrate these technologies. The prompt serves as the entry point for all functionalities, encapsulating user-defined variables and directives that guide the behavior of the language models involved. It acts as a set of instructions that the language models adhere to, ensuring that the generated content meets user-defined criteria, be it length, tone, or subject matter.
+Utilizing LLMManuGen with ChatGPT and ADA (Advanced Data Analysis plug-in) doesn't require a traditional software installation. Instead, the process is initiated through a specific prompt mechanism designed to seamlessly integrate these technologies.
 
 Once the initial prompt is copied, it can be fed into the ChatGPT and ADA models through their respective interfaces. The Manuscript class pseudo-coded into the prompt, takes over from this point. It maintains a structured, hierarchical data model that captures both the content and the metadata for the manuscript being generated. This hierarchical data model is an integral feature, allowing for a more organized and intuitive navigation through various sections and subsections of the content. It effectively serves as a dynamic table of contents that can be traversed linearly or jumped through as needed.
 
 With the Manuscript class, users have the flexibility to add or modify content within each section or subsection. Metadata such as directives, guidelines, and constraints can also be defined for each section, offering a control over the generated content. These instructions guide the content generation process, ensuring the output aligns with the user's expectations.
 
-The Manuscript class also provides options for exporting the manuscript into various formats, including JSON and Markdown, allowing for easy sharing and publication. It also includes a built-in search functionality, making it easier to locate specific content or sections based on different criteria. For those who wish to take a break or continue their work later, the Manuscript class supports data persistence. It allows users to save their progress in a JSON file, which can be loaded back into the system for a seamless continuation of work.
+The Manuscript class also provides options for exporting the manuscript into  JSON and Markdown formats, allowing for easy sharing and publication. It also includes a built-in search functionality, making it easier to locate specific content or sections based on different criteria. For those who wish to take a break from ChatGPT session and continue their work later, the Manuscript class supports data persistence. It allows users to save their progress in a JSON file, which can be loaded back into the system for a continuation of work.
 
 ## Initialization Prompt
 
 Below is the initialization prompt for copy & paste:
-
----PROMPT BEGINS BELOW---
 
 ```
 ## Initialization
@@ -60,6 +58,7 @@ class Manuscript
         True
 
     reset_current_section_path(path indices None by default)
+	    # Resets to the root without argument
         current path = path indices or first key of data sections as initial path
 
     get_section(path indices)
@@ -68,6 +67,7 @@ class Manuscript
             try
                 if children field in section
                    section = section children field
+				# It is important that if block is before the following set
                 section = section index
             except
                 None
@@ -85,18 +85,20 @@ class Manuscript
         current path = temporary path
         current section without children field if without children, next section without children field if without children
 
-    move_to_next_section()
+    move_to_next_section(optional only at the same level is false)
         section = data children field
         path = current path copy
         for index in path except last item
             section = section index children field
-        if children field in section path last index and section path last index children field
+        if not only at the same level and children field in section path last index and section path last index children field
             current path append 0
             "continue"
         if section length > path last index + 1
             increment current path last index
             "continue"
         else
+			if only at the same level:
+				"end"
             while current path length > 1
                 current path pop
                 sections = data children field
@@ -188,7 +190,7 @@ class Manuscript(Manuscript)
                         return _(section children field, remaining fields slice from second, local path)
         _(data children field, field values)
 
-Optional, if the user specifically requests: Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code.
+Optionally, if the user specifically accepts: Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code.
 
 ## WIZARD
 
@@ -229,9 +231,9 @@ Start by creating the Manuscript class and then follow the wizard.
 
 ---PROMPT ENDS ABOVE---
 
-The rest is basically following the instruction and step-by-step guide wizarded by ChatGPT.
+The rest is basically following the step-by-step instructions wizarded by ChatGPT.
 
-However, it is good to know the internal working of the class to have a better control over the flow of generating the hierarchical tree and traversing throught it.
+However, it is good to know the internal working of the class to have a better control over the flow of generating the hierarchical tree and traversing through it.
 
 # Features
 
@@ -241,7 +243,9 @@ The Manuscript class is a small code base but rich in features, each designed to
 
 **Dynamic Traversal**: The Manuscript class allows for both linear and non-linear navigation through the manuscript's sections. Whether you want to jump to a specific section or move sequentially, this feature offers the flexibility needed for effective content generation.
 
-**Content and Metadata Management**: Not only can you add and modify content within each section, but you can also include prompt directives like instructions, guidelines, and constraints. This feature automates the addition of timestamps, providing a detailed account of when each section was created or updated.
+**Content and Metadata Management**: You can add and modify content within each section, such as created, updated, and compeleted timestamps. You can also include prompt directives like instructions, guidelines, and constraints.
+
+A well-defined and properly used prompt serves as the entry point for all functionalities, encapsulating user-defined directives that guide the behavior of the language models content generation. It acts as a set of instructions ensuring that the generated content meets user-defined criteria, be it length, tone, or subject matter.
 
 **Search Functionality**: The class offers robust search capabilities, enabling users to find specific content or sections based on various criteria. This functionality is crucial for large manuscripts where pinpointing a specific section can be time-consuming.
 
