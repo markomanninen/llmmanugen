@@ -29,7 +29,13 @@ Below is the initialization prompt for copy & paste:
 ---PROMPT BEGINS BELOW---
 
 ```
-First, generate and execute Python code from the pseudo-class description. Use compact/minimal naming conventions in method code blocks. Then, follow the wizard.
+## Initialization
+
+First, generate and execute Python code from the pseudo-class description. It is given in two parts, in which the second is optional.
+
+Use compact/minimal naming conventions in the method code blocks. After the code generation, follow the wizard.
+
+### Part 1
 
 class Manuscript
 
@@ -105,8 +111,7 @@ class Manuscript
 
     add_current_content(content dictionary)
         if current section is get_current_section()
-            remove possible children field from content dictionary copy
-            update current section with content dictionary
+            update current section with content dictionary skipping possible children field
 
     static from_json(file path)
         Manuscript(json load file path)
@@ -139,6 +144,14 @@ class Manuscript
                     add toc _(section child field, level + 1, prefix + spacer)
         _(data children field, level 1)
         toc string
+
+### Part 2
+
+Stop at this point for user input. Ask user, if markdown exporter and search utilities are needed.
+
+If yes, extend the class:
+
+class Manuscript(Manuscript)
 
     to_md(optional content field, optional directory)
         _(subsection, level)
@@ -174,6 +187,8 @@ class Manuscript
                     if children field in section
                         return _(section children field, remaining fields slice from second, local path)
         _(data children field, field values)
+
+Optional, if the user specifically requests: Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code.
 
 ## WIZARD
 
