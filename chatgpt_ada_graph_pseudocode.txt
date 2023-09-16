@@ -1,0 +1,22 @@
+Initialize mind map graphviz.Graph object with neato layout overlap false
+
+Set node A as "Manuscript" with font blue size 50; fill gold, rounded; pen width 3; node_margin 0.5,0.25
+
+Initialize list main nodes:
+B -> Initialization
+C -> Traversal
+D -> Content Management
+E -> Export
+
+For each style filled, light yellow line; border black; pen width 2; font size 40; node_margin 0.5,0.25
+
+Initialize list sub nodes:
+B -> init(), validate_schema(), from_json()
+C -> get_current_section(), move_to_next_section(), get_current_and_next_sections() [get_current_and_next_sections with special background lightgrey]
+D -> add_current_content(), get_table_of_contents()
+E -> to_json(), to_md()
+
+For each pen width 1; border color light gray; font size 40; node_margin 0.5,0.25
+
+Render mind map to PNG format, cleanup
+Image open show

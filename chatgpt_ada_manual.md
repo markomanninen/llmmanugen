@@ -190,7 +190,7 @@ class Manuscript(Manuscript)
                         return _(section children field, remaining fields slice from second, local path)
         _(data children field, field values)
 
-Optionally, if the user specifically accepts: Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code.
+Optionally, if the user specifically accepts: 1. Do basic tests for the main methods of the class: init, move_to_next_section, get_current_and_next_sections, add_current_content, get_table_of_contents, to_json, and optionally: to_md, search, and find_path_indices. This is a good practice so that later in the wizard there won't be any surprises of the non-working code. 2. Create a flow chart about the class and its functionality. 3. Give a documentation of the class and its methods.
 
 ## WIZARD
 

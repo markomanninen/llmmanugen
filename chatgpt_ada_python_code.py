@@ -73,8 +73,8 @@ class Manuscript:
             self.current_path[-1] += 1
             return "continue"
         else:
-			if only_at_the_same_level:
-				return "end"
+            if only_at_the_same_level:
+                return "end"
 			
             while len(self.current_path) > 1:
                 self.current_path.pop()
