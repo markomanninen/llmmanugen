@@ -116,8 +116,10 @@ for node in root:
 ### Unit Testing
 - Extensive unit tests cover all these scenarios and edge cases, providing examples of expected behavior.
 
-
 """
+
+import re
+
 class Node:
     """
     Represents a node in a tree-like data structure. The Node class allows for
@@ -746,3 +748,32 @@ class Node:
         if next_node is None:
             raise StopIteration
         return next_node
+
+    def search(self, query, path=None):
+        results = []
+        def _(subnodes, new_path=[]):
+            for i, node in enumerate(subnodes):
+                local_path = new_path + [i]
+                if ((isinstance(query, str) and query.lower() in node.title.lower()) or
+                    (isinstance(query, re.Pattern) and query.search(node.title))):
+                    if path is None or path == local_path[:len(path)]:
+                        results.append((node, local_path))
+                if node.has_subnodes():
+                    _(node.subnodes, local_path)
+        _(self.subnodes)
+        return results
+
+    def find_path_by_titles(self, field_values):
+        if not isinstance(field_values, list):
+            field_values = [field_values]
+        results = []
+        def _(subnodes, remaining_fields, new_path=[]):
+            for i, node in enumerate(subnodes):
+                if remaining_fields and node.title == remaining_fields[0]:
+                    local_path = new_path + [i]
+                    if len(remaining_fields) == 1:
+                        results.append((node, local_path))
+                    if node.has_subnodes():
+                        return _(node.subnodes, remaining_fields[1:], local_path)
+        _(self.subnodes, field_values)
+        return results

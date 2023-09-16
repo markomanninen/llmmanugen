@@ -612,5 +612,37 @@ class TestNode(unittest.TestCase):
         grandchild2 = Node("Grandchild2")
         child1.add_subnodes(grandchild1, grandchild2)
         root.add_subnodes(child1, child2)
-        
         self.assertEqual((True, True, False), (root.has_subnodes(), child1.has_subnodes(), child2.has_subnodes()))
+    
+    def test_search(self):
+        root = Node("Root")
+        child1 = Node("Child1")
+        child2 = Node("Child2")
+        grandchild1 = Node("Grandchild")
+        grandchild2 = Node("Grandchild")
+        child1.add_subnodes(grandchild1, grandchild2)
+        root.add_subnodes(child1, child2)
+
+        result = root.search("Grandchild")
+        self.assertEqual(result[0][0].title, "Grandchild")
+        self.assertEqual(result[0][1], [0, 0])
+        self.assertEqual(result[1][1], [0, 1])
+        self.assertEqual(len(result), 2)
+    
+    def test_find_by_titles(self):
+        root = Node("Root")
+        child1 = Node("Child1")
+        child2 = Node("Child2")
+        grandchild1 = Node("Grandchild")
+        grandchild2 = Node("Grandchild")
+        child1.add_subnodes(grandchild1, grandchild2)
+        root.add_subnodes(child1, child2)
+
+        result = root.find_path_by_titles("Child1")
+        self.assertEqual(result[0][0].title, "Child1")
+        self.assertEqual(result[0][1], [0])
+
+        result = root.find_path_by_titles(["Child1", "Grandchild"])
+        self.assertEqual(result[0][0].title, "Grandchild")
+        self.assertEqual(result[0][1], [0, 0])
+        self.assertEqual(result[1][1], [0, 1])
