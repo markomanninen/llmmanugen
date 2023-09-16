@@ -1,23 +1,3 @@
-# LLMManuGen (c) 2023 - Marko T. Manninen - All Rights Reserved
-
-LLMManuGen is a Python module for traversing hierachically structured, or in other words, nested data. In conjuction with ChatGPT, Advanced Data Analysis, and Noteable plugins, it is suitable for automated content planning, starting from building a table of contents, to the actual content and summary generation.
-
-You can manage documents of varying types: task lists, manuscript table of contents, for instance. Initialization can be guided by ChatGPT, which helps you to form structured data, which in turn can be fed to the LLMManuGen module for a systematic iteration. Data import/export can be done in Python a native dictionary, JSON, and Markdown formats.
-
-Use cases:
-
-1. Use with ChatGPT + Advanced Data Analysis plug-in
-2. Use with ChatGPT + Noteable plug-in
-3. Use locally using ChatGPT in autopilot mode (coming...)
-
-# 1. Use with ChatGPT + Advanced Data Analysis plug-in
-
-Please read [ChatGPT + ADA Manual](https://github.com/markomanninen/llmmanugen/blob/main/chatgpt_ada_manual.md) and use the [initial prompt](https://github.com/markomanninen/llmmanugen/blob/main/chatgpt_ada_pseudoclass_prompt.txt) given and explained in the manual in ChatGPT activated with the Advanced Data Analysis plugin.
-
-# 2. Use with ChatGPT + Noteable plug-in
-
-Use the [initial prompt](https://github.com/markomanninen/llmmanugen/blob/main/chatgpt_noteable_initialization_prompt.txt) with Noteable plug-in activated. Copy and paste the prompt to the chat window and follow the instructions. Learn by interacting with the environment.
-
 # PROMPT - START WIZARD
 
 This step-by-step procedure facilitates manuscript generation using ChatGPT and Noteable plugin. The process involves installing `llmmanugen` module, importing the required classes, accessing documentation, initializing class instances, collecting table of contents (TOC) titles and prompts, iteratively generating content section by section, and ultimately saving the completed manuscript as a markdown text file. Each step is permanently stored in notebook cells, allowing for independent execution at any time.
