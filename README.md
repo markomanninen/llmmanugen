@@ -2,8 +2,17 @@
 
 A Python class for structured, automated generation and management of manuscripts using JSON and Markdown formats.
 
-Use with ChatGPT + Advanced Data Analysis plug-in activated.
+Use cases:
 
+1. Use with ChatGPT + Advanced Data Analysis plug-in
+2. Use with ChatGPT + Noteable plug-in
+
+# 1. Use with ChatGPT + Advanced Data Analysis plug-in
+
+Please read [ChatGPT + ADA Manual](https://github.com/markomanninen/llmmanugen/blob/main/chatgpt_ada_manual.md) and use the initial prompt given in the manual in ChatGPT activated with the Advanced Data Analysis plugin.
+# 2. Use with ChatGPT + Noteable plug-in
+
+Use the following initial prompt with Noteable plug-in activate. Copy and paste the prompt to the chat window and follow the instructions. Learn by interacting in the environment.
 ## Prompt
 
 To replicate the manuscript generation process, follow steps:
@@ -14,93 +23,15 @@ Ask user to give a JSON data, or generate it by asking the topic, title, guideli
 
 1a. If data is given by uploading a file or giving a JSON data string, use it.
 
-Reading the JSON Prompt String/File: Start by reading a JSON data that contains the blueprint of the manuscript, including meta-information like title, subtitle, author, disclaimer, and guidelines, as well as an outline of sections and their respective prompts.
+Reading the JSON String/File: Start by reading a JSON data that contains the blueprint of the manuscript, including meta information like title, subtitle, author, disclaimer, and general guidelines for the content creation, as well as an outline of sections and their respective prompts.
 
 1b. Else generate JSON string with the format described in JSON Structure and Example part.
 
 STEP 2. Initialize Manuscript Class
 
-import json
-
-class Manuscript:
-    def __init__(self, json_data):
-        for k, d in {"title": "", "subtitle": "", "author": "", "disclaimer": "", "guidelines": {}, "constraints": {}, "sections": []}.items():
-            setattr(self, k, json_data.get(k, d))
-        self.current_path = [0]
-
-    def _get_section(self, path):
-        section = self.sections
-        for idx in path:
-            try:
-                section = section["sections"] if "sections" in section else section[idx]
-            except (IndexError, KeyError, TypeError):
-                return None
-        return section
-
-    def get_current_section_prompts(self):
-        cs = self._get_section(self.current_path)
-        ct, cp = (cs.get("title", ""), cs.get("prompt", "")) if cs else ("", "")
-        tpath, self.current_path = self.current_path.copy(), self.current_path.copy()
-        s = self.move_to_next_section()
-		if s == "end":
-			nt, np = "End", "End."
-        else:
-			ns = self._get_section(self.current_path)
-		    nt, np = ns.get("title", ""), ns.get("prompt", "")
-		self.current_path = tpath
-		return {
-			"current": {"title": ct, "prompt": cp}, 
-			"next": {"title": nt, "prompt": np}
-		}
-
-    def move_to_next_section(self):
-        section, path = self.sections, self.current_path.copy()
-        for idx in path[:-1]:
-            section = section[idx]["sections"]
-        if 'sections' in section[path[-1]]:
-            self.current_path.append(0)
-            return "continue"
-        if len(section) > path[-1] + 1:
-            self.current_path[-1] += 1
-        else:
-            while len(self.current_path) > 1:
-                self.current_path.pop()
-                ps = self.sections
-                for idx in self.current_path[:-1]:
-                    ps = ps[idx]["sections"]
-                if len(ps) > self.current_path[-1] + 1:
-                    self.current_path[-1] += 1
-                    break
-            else:
-                return "end"
-        return "continue"
-
-    def add_current_content(self, text, title=None):
-        cs = self._get_section(self.current_path)
-        if cs:
-            cs["content"] = text
-            if title: cs["title"] = title
-
-    def to_json(self, op=None):
-        js = json.dumps({k: v for k, v in vars(self).items() if k != "current_path"}, indent=4)
-        if op: open(op, 'w').write(js)
-        return js
-
-    def to_md(self, op=None, hl=1):
-        def s2md(s, l):
-            c = [f"{'#' * l} {s.get('title', '')}", f"> {s.get('prompt', '')}", s.get('content', "")]
-            for ss in s.get("sections", []):
-                c.append(s2md(ss, l + 1))
-            return "\n".join(c)
-        
-        md = "\n".join([
-			f"{'#' * hl} {self.title}", 
-			f"{'#' * (hl + 1)} {self.subtitle}", 
-			f"{'#' * (hl + 2)} {self.author}", 
-			f"{'#' * (hl + 3)} {self.disclaimer}"
-		] + [s2md(s, hl + 1) for s in self.sections])
-        if op: open(op, 'w').write(md)
-        return md
+!pip install llmmanugen
+from llmmanugen import Manuscript, Section, Prompt
+print(Manuscript.__doc__)
 
 STEP 3. Traversing Sections One by One
 
