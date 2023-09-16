@@ -329,7 +329,7 @@ These examples demonstrate the various functionalities provided by the `Manuscri
 import json
 from datetime import datetime
 from .Section import Section
-from .lib import parse_json_to_manuscript, parse_markdown_to_manuscript, parse_dictionary_to_manuscript
+from .lib import parse_markdown_to_manuscript, parse_dictionary_to_manuscript
 
 class Manuscript(Section):
     """
@@ -370,37 +370,47 @@ class Manuscript(Section):
         # Generate and print the full contents of the manuscript
         print(manuscript.get_contents())
     """
-    def __init__(self, *sections, title="", subtitle=None, author=None, **kwargs):
+    def __init__(self, *sections, **kwargs):
         """
         Initializes a Manuscript object with a title, optional subtitle, and author.
         
         Parameters:
-            title (str): The title of the manuscript.
             *sections (Section): Sections to include in the manuscript.
-            subtitle (str, optional): The subtitle of the manuscript.
-            author (optional): The author of the manuscript.
             **kwargs: Additional fields for extended information.
+                title (str): The title of the manuscript.
+                subtitle (str, optional): The subtitle of the manuscript.
+                author (optional): The author of the manuscript.
         """
-        super().__init__(title, *sections)
-        self.subtitle = subtitle
-        self.author = author
+        super().__init__(kwargs.get("title", "Untitled"), *sections)
+        self._init(**kwargs)
+    
+    def _init(self, **kwargs):
         self.additional_fields = kwargs
 
-    def add_section(self, section):
-        """Adds one Section object to the manuscript.
+    def add_section(self, section=None, **kwargs):
+        """Adds one Section/dictionary object to the manuscript.
+
+        Note: dictionary object is transformed to Section type.
 
         Parameters:
-            section (Section): Section object to add to the manuscript.
+            section (Section|dict): Section/dictionary object to add to the manuscript.
         """
-        self.add_subnode(section)
+        if kwargs and not section:
+            section = Section(**kwargs)
+        if isinstance(section, Section):
+            self.add_subnode(section)
+        else:
+            raise TypeError("Section must be type of Section")
     
     def add_sections(self, *sections):
-        """Adds one or more Section objects to the manuscript.
+        """Adds one or more Section/dictionary objects to the manuscript.
+
+        Note: Dictionaries are transformed to Section type.
 
         Parameters:
-            *sections (Section): Section object(s) to add to the manuscript.
+            *sections (Section|dict): Section/dictionary object(s) to add to the manuscript.
         """
-        self.add_subnodes(*sections)
+        self.add_subnodes(*(section if isinstance(section, Section) else Section(**section) for section in sections))
     
     def get_current_section(self):
         """Returns the current section in the manuscript.
@@ -409,6 +419,9 @@ class Manuscript(Section):
             Section: The current section object.
         """
         return self.current_node
+
+    def update_current_section(self, **kwargs):
+        self.get_current_section().update(**kwargs)
 
     def move_to_next_section_and_get_prompts(self, general_instructions=True):
         """
@@ -419,23 +432,32 @@ class Manuscript(Section):
 
         Returns:
         dict: A dictionary containing the following keys:
-            - 'current_title': The title of the current section.
-            - 'current_prompt': The prompt for the current section.
+            - 'current': A dictionary containing the title and prompt of the current section.
             - 'next': A dictionary containing the title and prompt of the next section, or None if there is no next section.
             - 'general_instructions': (Optional) A dictionary containing general guidelines and constraints, included if general_instructions is True.
 
         Example:
         {
-            'current_title': 'Introduction',
-            'current_prompt': 'Write an introduction here.',
-            'next': {'title': 'Background', 'prompt': 'Provide some background.'},
-            'general_instructions': {'guidelines': 'Keep it concise.', 'constraints': 'Max 300 words'}
+            'current': {
+                'title': 'Introduction',
+                'prompt': 'Write an introduction here.'
+            },
+            'next': {
+                'title': 'Background',
+                'prompt': 'Provide some background.'
+            },
+            'general_instructions': {
+                'guidelines': 'Keep it concise.', 
+                'constraints': 'Max 300 words'
+            }
         }
         """
         self.move_to_next_section()
         result = {
-            'current_title': self.get_current_title(),
-            'current_prompt': self.get_current_prompt(),
+            'current': {
+                "title": self.get_current_title(),
+                'prompt': self.get_current_prompt()
+            },
             'next': (lambda x: {"title": x.title, "prompt": x.prompt} if x else None)(self.peak_next())
         }
         if general_instructions:
@@ -444,7 +466,10 @@ class Manuscript(Section):
                 "constraints": self.constraints
             }
         return result
-        
+    
+    def set_and_get_current_section_by_index(self, index):
+        return self.set_current_node_by_index(index)
+    
     def move_to_next_section(self):
         """Moves to the next section in the manuscript and returns it.
 
@@ -660,7 +685,8 @@ class Manuscript(Section):
         except AttributeError:
             return self.additional_fields.get(name, None)
 
-    def from_dictionary(self, data_dict):
+    @classmethod
+    def from_dictionary(cls, data_dict):
         """
         Convert a dictionary to a Manuscript object.
 
@@ -670,9 +696,10 @@ class Manuscript(Section):
         Returns:
         - Manuscript: Manuscript object initialized with the data from the dictionary.
         """
-        return parse_dictionary_to_manuscript(data_dict)
+        return parse_dictionary_to_manuscript(cls() if cls == Manuscript else cls, data_dict)
 
-    def from_json(self, json_str):
+    @classmethod
+    def from_json(cls, json_str):
         """
         Initializes a Manuscript object from a JSON-formatted string.
 
@@ -682,9 +709,10 @@ class Manuscript(Section):
         Returns:
         A Manuscript object initialized with the data from the JSON string.
         """
-        return parse_json_to_manuscript(json_str)
+        return parse_dictionary_to_manuscript(cls() if cls == Manuscript else cls, json.loads(json_str))
 
-    def from_markdown(self, markdown_str, content_field="content"):
+    @classmethod
+    def from_markdown(cls, markdown_str, content_field="content"):
         """
         Initializes a Manuscript object from a Markdown-formatted string.
 
@@ -695,7 +723,7 @@ class Manuscript(Section):
         Returns:
         A Manuscript object initialized with the data from the Markdown string.
         """
-        return parse_markdown_to_manuscript(markdown_str, content_field)
+        return parse_markdown_to_manuscript(cls() if cls == Manuscript else cls, markdown_str, content_field)
 
     def to_markdown(self, content_field="content"):
         """
@@ -708,18 +736,26 @@ class Manuscript(Section):
         A Markdown-formatted string representing the Manuscript object.
         """
         return self.get_contents(content_field)
-
+    
     def to_json(self):
         """
         Converts the Manuscript object and its nested sections to a JSON-formatted string.
+        
+        Returns:
+            str: A JSON-formatted string representing the Manuscript object and its nested sections.
+        """
+        return json.dumps(self.to_dictionary(), indent=4)
+
+    def to_dictionary(self):
+        """
+        Converts the Manuscript object and its nested sections to a dictionary.
 
         The method traverses the tree-like structure of the Manuscript object, converting each node and its subnodes to dictionaries. 
-        These dictionaries are then serialized to a JSON-formatted string.
 
         Returns:
-        str: A JSON-formatted string representing the Manuscript object and its nested sections.
+            dict: The Manuscript object and its nested sections as a single dictionary.
 
-        Example JSON Output:
+        Example Output:
         {
             "title": "Sample Manuscript",
             "subtitle": "An example",
@@ -733,13 +769,14 @@ class Manuscript(Section):
                     "title": "Introduction",
                     "summary": "Summary of the introduction",
                     "content": "This is the introduction.",
+                    "prompt": {},
                     ...
                 },
                 ...
             ]
         }
         """
-        def node_to_dict(node):
+        def traverse(node):
             created = node.created if node.created else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             updated = node.updated if node.updated else created
             node_dict = {
@@ -750,20 +787,17 @@ class Manuscript(Section):
                 'completed': node.completed,
                 'created': created,
                 'updated': updated,
-                'sections': [node_to_dict(subnode) for subnode in node.subnodes]
+                'sections': [traverse(subnode) for subnode in node.subnodes]
             }
             return node_dict
-
-        created = self.additional_fields.get('created', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        manuscript_dict = {
+        created = self.created or datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return {
             'title': self.title,
             'subtitle': self.subtitle,
             'author': self.author,
             'created': created,
-            'updated': self.additional_fields.get('updated', created),
-            'guidelines': self.additional_fields.get('guidelines', {}),
-            'constraints': self.additional_fields.get('constraints', {}),
-            'sections': [node_to_dict(section) for section in self.subnodes]
+            'updated': self.updated or created,
+            'guidelines': self.guidelines or {},
+            'constraints': self.constraints or {},
+            'sections': [traverse(section) for section in self.subnodes]
         }
-
-        return json.dumps(manuscript_dict, indent=4)
