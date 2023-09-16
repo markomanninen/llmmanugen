@@ -43,7 +43,15 @@ class Section(Node):
             created (str, optional): A created related to the section.
             updated (str, optional): A updated related to the section.
         """
-        super().__init__(title, *nodes)
+        # Make sure that all subnodes are type of Section
+        def traverse(node):
+            if not isinstance(node, Section):
+                node = Section(**node)
+            if node.has_subnodes():
+                for subnode in node.subnodes:
+                    traverse(subnode)
+            return node
+        super().__init__(title, *(traverse(node) for node in nodes))
         self._summary = summary if summary else ""
         self._content = content if content else ""
         self._prompt = prompt
@@ -207,7 +215,6 @@ class Section(Node):
                 words_count += word_count
                 letters_count += letter_count
         return words_count, letters_count
-
             
     def __getitem__(self, key):
         """
@@ -219,7 +226,7 @@ class Section(Node):
         Returns:
             The value of the attribute if it exists, None otherwise.
         """
-        return getattr(self, key, None)
+        return getattr(self, key, self._additional_fields.get(key, None))
 
     def __setitem__(self, key, value):
         """
@@ -231,4 +238,7 @@ class Section(Node):
         """
         if hasattr(self, key):
             setattr(self, key, value)
+            self._update_timestamp()
+        elif key in self._additional_fields:
+            self._additional_fields[key] = value
             self._update_timestamp()
