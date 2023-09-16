@@ -29,7 +29,7 @@ class Section(Node):
         __getitem__(key): Retrieve an attribute value using a key.
         __setitem__(key, value): Set an attribute value using a key.
     """
-    def __init__(self, title, *nodes, summary=None, content=None, prompt=None, completed=None, created=None, updated=None):
+    def __init__(self, title, *nodes, summary=None, content=None, prompt=None, completed=None, created=None, updated=None, **kwargs):
         """
         Initializes a new Section instance with a title and optional summary, content, and prompt, completed, created, and updated.
 
@@ -50,6 +50,8 @@ class Section(Node):
         self._completed = True if completed else False
         self._created = created if created else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self._updated = updated if updated else self._created
+        # Note: Not used for any particular case so far.
+        self._additional_fields = kwargs
 
     def update(self, title=None, summary=None, content=None, prompt=None, completed=False):
         """
