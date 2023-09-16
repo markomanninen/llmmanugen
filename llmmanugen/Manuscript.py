@@ -239,7 +239,7 @@ body = Section("Body", content="This is the main content.")
 conclusion = Section("Conclusion", content="This is the conclusion.")
 
 # Create a manuscript with sections
-manuscript = Manuscript("My Manuscript", intro, body, conclusion, subtitle="A Subtitle", author="John Doe")
+manuscript = Manuscript(title="My Manuscript", subtitle="A Subtitle", author="John Doe", *(intro, body, conclusion))
 
 # Add a new section to the manuscript
 new_section = Section("New Section", content="This is a new section.")
@@ -329,7 +329,7 @@ These examples demonstrate the various functionalities provided by the `Manuscri
 import json
 from datetime import datetime
 from .Section import Section
-from .lib import parse_json_to_manuscript, parse_markdown_to_manuscript
+from .lib import parse_json_to_manuscript, parse_markdown_to_manuscript, parse_dictionary_to_manuscript
 
 class Manuscript(Section):
     """
@@ -347,7 +347,7 @@ class Manuscript(Section):
         conclusion = Section("Conclusion", content="This is the conclusion.")
 
         # Create a manuscript with sections
-        manuscript = Manuscript("My Manuscript", intro, body, conclusion, subtitle="A Subtitle", author="John Doe")
+        manuscript = Manuscript(title="My Manuscript", subtitle="A Subtitle", author="John Doe", *(intro, body, conclusion))
 
         # Add a new section to the manuscript
         new_section = Section("New Section", content="This is a new section.")
@@ -569,7 +569,6 @@ class Manuscript(Section):
         current_section = self.get_current_section()
         current_title = current_section.title if current_section else "Untitled"
         current_section = self.get_current_section()
-        print(current_section, current_title)
         def _(sections, level, prefix=''):
             for i, section in enumerate(sections):
                 is_last = i == len(sections) - 1
@@ -660,6 +659,18 @@ class Manuscript(Section):
             return super().__getattr__(name)
         except AttributeError:
             return self.additional_fields.get(name, None)
+
+    def from_dictionary(self, data_dict):
+        """
+        Convert a dictionary to a Manuscript object.
+
+        Parameters:
+        - data_dict (dict): Dictionary containing manuscript data.
+
+        Returns:
+        - Manuscript: Manuscript object initialized with the data from the dictionary.
+        """
+        return parse_dictionary_to_manuscript(data_dict)
 
     def from_json(self, json_str):
         """
