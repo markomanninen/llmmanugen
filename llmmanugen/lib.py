@@ -156,3 +156,48 @@ def parse_markdown_to_manuscript(md_text, content_field="content"):
     set_content(current_section, content_lines)
 
     return manuscript
+
+def parse_dictionary_to_manuscript(data):
+    """
+    Convert a dictionary to a Manuscript object.
+
+    Parameters:
+    - data (dict): Dictionary containing manuscript data.
+
+    Returns:
+    - Manuscript: Manuscript object initialized with the data from the dictionary.
+    """
+    from .Manuscript import Manuscript
+    from .Section import Section
+
+    def dictionary_to_sections(sections):
+        """
+        Convert a list of dictionaries to a list of Section objects.
+
+        Parameters:
+        - sections (list): List of dictionaries, each representing a section.
+
+        Returns:
+        - list: List of Section objects.
+        """
+        section_objects = []
+        for section in sections:
+            title = section.get('title', '')
+            sub_sections = section.get('sections', [])
+            created = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            kwdict = {
+                'summary': section.get('summary', ''),
+                'content': section.get('content', ''),
+                'prompt': section.get('prompt', None),
+                'completed': section.get('completed', ''),
+                'created': section.get('created', created),
+                'updated': section.get('updated', section.get('created', created))
+            }
+            if sub_sections:
+                sub_sections = dictionary_to_sections(sub_sections)
+            section_objects.append(Section(title, *sub_sections, **kwdict))
+        return section_objects
+    
+    sections = dictionary_to_sections(data["sections"]) if "sections" in data else []
+    fields = {k: v for k, v in data.items() if k != "sections"}
+    return Manuscript(*sections, **fields)
