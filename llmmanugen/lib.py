@@ -1,88 +1,7 @@
-import json
 import re
 from datetime import datetime
 
-def parse_json_to_manuscript(json_str):
-    """
-    Parses a JSON-formatted string to create a Manuscript object with nested Section objects.
-
-    The function deserializes the JSON string to a Python dictionary and then recursively constructs
-    Section objects for each section and its sub-sections. These Section objects are added to a Manuscript object.
-
-    Parameters:
-    - json_str (str): The JSON-formatted string representing the manuscript and its sections.
-
-    Returns:
-    Manuscript: A Manuscript object initialized with the data from the JSON string.
-
-    Example JSON Input:
-    {
-        "title": "Sample Manuscript",
-        "subtitle": "An example",
-        "author": "John Doe",
-        "created": "2023-09-16 12:34:56",
-        "updated": "2023-09-16 12:34:56",
-        "guidelines": {},
-        "constraints": {},
-        "sections": [
-            {
-                "title": "Introduction",
-                "summary": "Summary of the introduction",
-                "content": "This is the introduction.",
-                ...
-            },
-            ...
-        ]
-    }
-    """
-    from .Manuscript import Manuscript
-    from .Section import Section
-    
-    json_data = json.loads(json_str)
-
-    def parse_node(node_data):
-        
-        title = node_data.get('title', '')
-        summary = node_data.get('summary', '')
-        content = node_data.get('content', '')
-        prompt = node_data.get('prompt', {})
-        completed = node_data.get('completed', False)
-        created = node_data.get('created', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        updated = node_data.get('updated', created)
-        
-        node = Section(title, summary=summary, content=content, prompt=prompt, completed=completed, created=created, updated=updated)
-
-        subnodes_data = node_data.get('sections', [])
-        for subnode_data in subnodes_data:
-            subnode = parse_node(subnode_data)
-            node.add_subnode(subnode)
-
-        return node
-
-    manuscript_data = json_data.get('manuscript', {})
-    
-    title = json_data.get('title', '')
-    subtitle = json_data.get('subtitle', '')
-    author = json_data.get('author', '')
-    
-    created = json_data.get('created', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    additional_arguments = {
-        "created": created,
-        "updated": json_data.get('updated', created),
-        "guidelines": json_data.get('guidelines', {}),
-        "constraints": json_data.get('constraints', {})
-    }
-
-    manuscript = Manuscript(title=title, subtitle=subtitle, author=author, **additional_arguments)
-
-    sections_data = json_data.get('sections', [])
-    for section_data in sections_data:
-        section = parse_node(section_data)
-        manuscript.add_subnode(section)
-
-    return manuscript
-
-def parse_markdown_to_manuscript(md_text, content_field="content"):
+def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="content"):
     """
     Parses a Markdown-formatted text to create a Manuscript object with nested Section objects.
 
@@ -111,12 +30,12 @@ def parse_markdown_to_manuscript(md_text, content_field="content"):
     - The number of '#' characters indicates the nesting level of the section.
     - Lines not starting with '#' characters are considered content for the most recently defined section.
     """
-    from .Manuscript import Manuscript
     from .Section import Section
 
     lines = md_text.strip().split('\n')
     manuscript_title = lines[0].replace('# ', '')
-    manuscript = Manuscript(title=manuscript_title)
+    manuscript_instance.title = manuscript_title
+    manuscript = manuscript_instance
     current_section = manuscript
     current_indent = 0
     content_lines = []
@@ -155,9 +74,9 @@ def parse_markdown_to_manuscript(md_text, content_field="content"):
 
     set_content(current_section, content_lines)
 
-    return manuscript
+    return manuscript_instance
 
-def parse_dictionary_to_manuscript(data):
+def parse_dictionary_to_manuscript(manuscript_instance, data):
     """
     Convert a dictionary to a Manuscript object.
 
@@ -167,7 +86,6 @@ def parse_dictionary_to_manuscript(data):
     Returns:
     - Manuscript: Manuscript object initialized with the data from the dictionary.
     """
-    from .Manuscript import Manuscript
     from .Section import Section
 
     def dictionary_to_sections(sections):
@@ -197,7 +115,8 @@ def parse_dictionary_to_manuscript(data):
                 sub_sections = dictionary_to_sections(sub_sections)
             section_objects.append(Section(title, *sub_sections, **kwdict))
         return section_objects
-    
-    sections = dictionary_to_sections(data["sections"]) if "sections" in data else []
-    fields = {k: v for k, v in data.items() if k != "sections"}
-    return Manuscript(*sections, **fields)
+    manuscript_instance.title = data.get("title", "Untitled")
+    manuscript_instance._init(**{k: v for k, v in data.items() if k not in ["title", "sections"]})
+    if "sections" in data:
+        manuscript_instance.add_sections(*dictionary_to_sections(data["sections"]))
+    return manuscript_instance
