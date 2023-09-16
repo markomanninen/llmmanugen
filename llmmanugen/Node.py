@@ -425,10 +425,8 @@ class Node:
             - Iteratively navigates to the subnode at each index in the list.
             - Sets the current node to the final node reached.
         """
-        node = self
-        for i in index:
-            node = node.subnodes[i]
-        self._current_node = node
+        self._current_node = self.get_node_by_index(index)
+        return self._current_node
 
     def get_node_by_index(self, index):
         """
