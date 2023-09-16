@@ -4,6 +4,25 @@ from llmmanugen import Manuscript, Section
 
 class TestManuscriptConversionMethods(unittest.TestCase):
 
+    def test_from_and_to_dictionary(self):
+
+        manuscript_dict = {
+            "title": "My Manuscript",
+            "subtitle": "A Subtitle",
+            "author": "John Doe",
+            "sections": [
+                {"title": "Introduction", "content": "Intro content"},
+                {"title": "Conclusion", "content": "Conclusion content"}
+            ]
+        }
+
+        manuscript1 = Manuscript.from_dictionary(manuscript_dict)
+        manuscript2 = Manuscript().from_dictionary(manuscript_dict)
+
+        self.assertTrue(manuscript1.to_dictionary()==manuscript2.to_dictionary())
+        self.assertTrue(manuscript1.title == "My Manuscript")
+        self.assertTrue(manuscript1.title == manuscript2.title)
+    
     def test_from_json(self):
         json_str = json.dumps({
             "title": "My Manuscript",
@@ -16,12 +35,12 @@ class TestManuscriptConversionMethods(unittest.TestCase):
         })
 
         manuscript = Manuscript().from_json(json_str)
-        
-        # Assuming from_json is implemented correctly
+        self.assertTrue(Manuscript.from_json(json_str).to_dictionary() == manuscript.to_dictionary())
         self.assertEqual(manuscript.title, "My Manuscript")
         self.assertEqual(manuscript.subtitle, "A Subtitle")
         self.assertEqual(manuscript.author, "John Doe")
         self.assertEqual(len(manuscript.subnodes), 2)
+        self.assertEqual(len(Manuscript.from_json(json_str).subnodes), 2)
 
     def test_to_json(self):
         manuscript = Manuscript(title="My Manuscript", subtitle="A Subtitle", author="John Doe")
@@ -43,10 +62,11 @@ class TestManuscriptConversionMethods(unittest.TestCase):
     def test_from_markdown(self):
         markdown_str = "# My Manuscript\n## Introduction\nIntro Content\n## Conclusion\nConclusion Content"
         manuscript = Manuscript().from_markdown(markdown_str)
-        
-        # Assuming from_markdown is implemented correctly
+        manuscript2 = Manuscript.from_markdown(markdown_str)
         self.assertEqual(manuscript.title, "My Manuscript")
         self.assertEqual(len(manuscript.subnodes), 2)
+        self.assertEqual(manuscript2.title, "My Manuscript")
+        self.assertEqual(len(manuscript2.subnodes), 2)
 
     def test_to_markdown(self):
         manuscript = Manuscript(title="My Manuscript")
