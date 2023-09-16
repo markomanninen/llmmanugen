@@ -29,9 +29,11 @@ Reading the JSON String/File: Start by reading a JSON data that contains the blu
 
 STEP 2. Initialize Manuscript Class
 
+```
 !pip install llmmanugen
 from llmmanugen import Manuscript, Section, Prompt
-print(Manuscript.__doc__)
+print(Manuscript.__doc__), print(Prompt.__doc__)
+```
 
 STEP 3. Traversing Sections One by One
 
@@ -82,6 +84,7 @@ JSON Example
 
 Here's a simplified example:
 
+```
 {
     "title": "The Interplay of Quantum Computing and Artificial Intelligence",
     "subtitle": "Unlocking New Frontiers in Technology",
@@ -125,7 +128,7 @@ Here's a simplified example:
         }
     ]
 }
-
+```
 -----
 
 Start from STEP 1. Use Quick reply buttons/action suggestions when applicable.
