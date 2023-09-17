@@ -44,6 +44,14 @@ class TestNode(unittest.TestCase):
         self.assertEqual(node.current_node, None)
         self.assertEqual(node.reached_tree_end, False)
         self.assertEqual(node.reached_tree_start, True)
+    
+    def test_untitled_init(self):
+        node = Node()
+        self.assertIn("Node-", str(node))
+    
+    def test_fields(self):
+        node = Node(**{"title": "Node", "subnodes": [], "foo": "bar"})
+        self.assertEqual(node.fields, {"foo": "bar"})
 
     def test_reset(self):
         self.root.reset()

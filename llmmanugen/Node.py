@@ -173,18 +173,18 @@ class Node:
     """
     def __init__(self, title=None, *subnodes, **kwargs):
         """
-        Initializes a new Node instance.
+        Create a new Node instance and initialize its attributes.
 
         Parameters:
-            title (str, optional): The title of the node. Default is None.
-            *subnodes (Node): Variable number of subnodes to add to the current node.
+            - title (str, optional): The node's title. Defaults to None.
+            - *subnodes (Node): Zero or more subnodes to include under this node.
+            - **kwargs: Additional keyword arguments, such as 'subnodes' to extend the list of subnodes.
 
-        Logic Explained:
-            - Increments the class-level 'counter' by 1.
-            - Sets the '_title' and '_id' attributes.
-            - Initializes '_parent' to None.
-            - Populates the 'subnodes' list with the given subnodes and sets their parent to the current node.
-            - Calls the 'reset' method to initialize boundary flags and current node state.
+        Side Effects:
+            - Increments the class-level 'counter' attribute.
+            - Initializes '_title', '_id', and '_parent' attributes.
+            - Populates 'subnodes' list and sets their parent to this node.
+            - Invokes 'reset' method to initialize state flags.
         """
         Node.counter += 1
         self._title = title
@@ -198,6 +198,7 @@ class Node:
         # Extend subnodes if keyword arguments has subnodes
         if "subnodes" in kwargs:
             self.add_subnodes(*kwargs["subnodes"])
+        self.fields = {k: v for k, v in kwargs.items() if k not in ["title", "subnodes"]}
 
         for node in self.subnodes:
             # Subnodes parent is the current node
