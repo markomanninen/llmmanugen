@@ -1,0 +1,21 @@
+## STEP 1 (a-d)
+
+a) Start with a new or existing project/notebook.
+
+b) If the `llmmanugen` module is not present in the Noteable project:
+
+```
+!pip install llmmanugen
+```
+
+c) Then:
+
+```
+from llmmanugen import Manuscript, Section, Prompt, Node
+```
+
+d) Access the documentation for the `Manuscript`, `Section`, `Node`, and `Prompt` classes for future reference. Each class has a plenty of documentation, so you may want to retrieve them independently:
+
+```
+help({class})
+```
