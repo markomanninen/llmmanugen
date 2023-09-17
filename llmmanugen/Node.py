@@ -171,23 +171,38 @@ class Node:
     """
     int: Class-level variable that keeps track of the number of Node instances created.
     """
-    def __init__(self, title=None, *subnodes, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
-        Create a new Node instance and initialize its attributes.
+        Initialize a new Node instance with various attributes and optional subnodes.
 
         Parameters:
-            - title (str, optional): The node's title. Defaults to None.
-            - *subnodes (Node): Zero or more subnodes to include under this node.
-            - **kwargs: Additional keyword arguments, such as 'subnodes' to extend the list of subnodes.
+            - *args: Accepts zero or more arguments. The last string argument is set as the node's title. 
+                    Other arguments must be Node instances or dictionaries to be added as subnodes.
+            - **kwargs: Keyword arguments for additional configurations.
+                - subnodes (list[Node], optional): A list of Node instances to extend the existing subnodes.
+                - Any other keyword arguments are stored in the 'fields' dictionary.
 
         Side Effects:
-            - Increments the class-level 'counter' attribute.
+            - Increments the class-level 'counter' attribute to generate a unique ID for the node.
             - Initializes '_title', '_id', and '_parent' attributes.
             - Populates 'subnodes' list and sets their parent to this node.
-            - Populates 'fields' dictionary that contains all other than title and subnodes fields.
-            - Invokes 'reset' method to initialize state flags.
+            - Fills 'fields' dictionary with additional keyword arguments, excluding 'title' and 'subnodes'.
+            - Calls 'reset' method to initialize state flags.
+
+        Raises:
+            - TypeError: If any argument in *args is neither a string, Node instance, nor dictionary.
         """
         Node.counter += 1
+        title = kwargs.get("title", None)
+        subnodes = []
+        for arg in args:
+            # The last string in the arguments will be the one left for the title
+            if isinstance(arg, str):
+                title = arg
+            elif isinstance(arg, Node) or isinstance(arg, dict):
+                subnodes.append(arg)
+            else:
+                raise TypeError("Node must be either type of Node or dictionary")
         self._title = title
         self._id = Node.counter
         # Parent is by default None
@@ -195,10 +210,12 @@ class Node:
         self._parent = None
         self.subnodes = []
         if subnodes:
-            self.add_subnodes(*subnodes)
+            for node in subnodes:
+                self.add_subnode(node)
         # Extend subnodes if keyword arguments has subnodes
         if "subnodes" in kwargs:
             self.add_subnodes(*kwargs["subnodes"])
+        # Set all other fields to the field storage except subnodes and title
         self.fields = {k: v for k, v in kwargs.items() if k not in ["title", "subnodes"]}
         self.reset()
 
@@ -248,6 +265,8 @@ class Node:
             - Sets 'reached_tree_end' to False.
             - Sets 'reached_tree_start' to True.
         """
+        self._insert_index = None
+        self._remove_index = None
         self._current_node = None
         self.reached_tree_end = False
         self.reached_tree_start = True
@@ -317,38 +336,43 @@ class Node:
             node (Node): The node to set as the current node.
         """
         self._current_node = node
-
-    def add_subnode(self, node=None, **kwargs):
-        """
-        Append a subnode to the current node's 'subnodes' list and set its parent to the current node.
-
-        Parameters:
-            - node (Node or dict, optional): The node to append as a subnode. Can also be a dictionary to create a new Node.
-            - **kwargs: Keyword arguments to create a new Node if 'node' is not provided.
-
-        Returns:
-            Node: The current node, allowing for method chaining.
-
-        Raises:
-            - TypeError: If 'node' is neither a Node object nor a dictionary.
-            - ValueError: If 'node' is not provided and 'kwargs' is empty.
-
-        Note:
-            If 'node' is a dictionary, it will be converted to a Node object.
-        """
+    
+    def _modify_subnodes(self, index_list, action, node=None, **kwargs):
+        # Validate and create the node
         if not isinstance(node, Node) and not isinstance(node, dict):
             raise TypeError("Node must be of type Node object or dictionary")
-        if not node:
-            if kwargs:
-                node = kwargs
-            else:
-                raise ValueError("Node is mandatory")
-        # All dictionary are translated to the the type of Node
-        if isinstance(node, dict):
-            node = Node(**node)
+        if not node and not kwargs:
+            raise ValueError("Either 'node' or 'kwargs' must be provided")
+        if isinstance(node, dict) or kwargs:
+            # If both are given, node will be used
+            node = Node(**(node or kwargs))
         node._parent = self
-        self.subnodes.append(node)
+
+        # Navigate to the target location
+        target = self
+        for i in index_list[:-1]:
+            target = target.subnodes[i]
+
+        # Perform the action
+        if action == 'set':
+            target.subnodes[index_list[-1]] = node
+        elif action == 'insert':
+            target.subnodes.insert(index_list[-1], node)
+        elif action == 'add':
+            target.subnodes.append(node)
+        else:
+            raise ValueError("Invalid action")
+
         return self
+
+    def set_subnode(self, index_list, node=None, **kwargs):
+        return self._modify_subnodes([index_list] if isinstance(index_list, int) else index_list, 'set', node, **kwargs)
+
+    def insert_subnode(self, index_list, node=None, **kwargs):
+        return self._modify_subnodes([index_list] if isinstance(index_list, int) else index_list, 'insert', node, **kwargs)
+
+    def add_subnode(self, node=None, **kwargs):
+        return self._modify_subnodes([len(self.subnodes)], 'add', node, **kwargs)
 
     def next(self):
         """
@@ -467,7 +491,7 @@ class Node:
             - Returns the final node reached.
         """
         node = self
-        for i in index:
+        for i in [index] if isinstance(index, int) else index:
             node = node.subnodes[i]
         return node
 
@@ -623,6 +647,9 @@ class Node:
         for subnode in self.subnodes:
             subnode.pretty_print(indent + 1)
 
+    def __repr__(self):
+        return f"llmmanugen.Node({str(self)} subnodes={len(self.subnodes)} fields={self.fields})"
+
     def __str__(self):
         """
         Returns a string representation of the current node.
@@ -697,8 +724,15 @@ class Node:
             self.add_subnode(node)
 
         return self
+    
+    def set_subnodes(self, index, *nodes):
+        raise ValueError("There is no meaningful way to set subnodes in multitude. Use single set_subnode() method.")
 
-    def remove_subnodes(self, indices_list):
+    def insert_subnodes(self, index, *nodes):
+        for node in nodes:
+            self.insert_subnode(index, node)
+
+    def remove_subnodes(self, indices_list=None):
         """
         Removes multiple subnodes from the current node's list of subnodes based on their indices.
 
@@ -724,8 +758,12 @@ class Node:
         Note:
             - Indices are removed in reverse order to avoid messing up the indices of the nodes that are yet to be removed.
         """
-        # Sorting indices_list based on length and value, in reverse order
-        indices_list.sort(key=lambda x: (len(x) if isinstance(x, list) else 0, x), reverse=True)
+        indices_list = self._remove_index if indices_list is None else indices_list
+        if isinstance(indices_list, int):
+            indices_list = [indices_list]
+        else:
+            # Sorting indices_list based on length and value, in reverse order
+            indices_list.sort(key=lambda x: (len(x) if isinstance(x, list) else 0, x), reverse=True)
 
         for index in indices_list:
             if isinstance(index, list):
@@ -733,6 +771,8 @@ class Node:
                 del node_to_remove.subnodes[index[-1]]
             else:
                 del self.subnodes[index]
+
+        return self
 
     def __iter__(self):
         """
@@ -816,3 +856,47 @@ class Node:
                         return _(node.subnodes, remaining_fields[1:], local_path)
         _(self.subnodes, field_values)
         return results
+
+    def __sub__(self, other):
+        if isinstance(other, int):
+            self._remove_index = other
+            self.remove_subnodes()
+            return self
+        else:
+            raise TypeError("Unsupported type for substraction")
+
+    def __isub__(self, other):
+        if isinstance(other, int):
+            self.remove_subnodes(other)
+        else:
+            raise TypeError("Unsupported type for in-place substraction")
+        return self
+    
+    def __iadd__(self, other):
+        return self.__add__(other)
+
+    def __add__(self, other):
+        if isinstance(other, int):
+            self._insert_index = other
+            return self
+        if isinstance(other, list) or isinstance(other, tuple):
+            self.add_subnodes(*other)
+        else:
+            if self._insert_index is not None:
+                node = self.get_node_by_index(self._insert_index)
+                if node:
+                    node.add_subnode(other)
+                self._insert_index = None
+            else:
+                self.add_subnode(other)
+        return self
+
+    def __igt__(self, other):
+        return self.__gt__(other)
+
+    def __gt__(self, other):
+        if isinstance(other, list) or isinstance(other, tuple):
+            self.add_subnodes(*other)
+        else:
+            self.add_subnode(other)
+        return self.subnodes[-1]

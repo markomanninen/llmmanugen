@@ -21,17 +21,19 @@ class TestNode(unittest.TestCase):
     def test_dictionary_init(self):
         root = Node("Root")
         child1 = Node("Child1")
-        child2 = Node("Child2")
         grandchild1 = Node("Grandchild1")
         grandchild2 = Node("Grandchild2")
-        child3 = Node("Child3", {"title": "Grandchild3"})
-        root.add_subnode(child1)
-        root.add_subnode({"title": "Child2"})
         child1.add_subnode(grandchild1)
         child1.add_subnode(grandchild2)
+        root.add_subnode(child1)
+        root.add_subnode({"title": "Child2"})
+        child3 = Node("Child3", {"title": "Grandchild3"})
         root.add_subnodes(child3)
-        print("\n")
-        root.pretty_print()
+
+        self.assertEqual(type(root.subnodes[1]), Node)
+        self.assertEqual(root.subnodes[1].title, "Child2")
+        self.assertEqual(type(root.subnodes[2].subnodes[0]), Node)
+        self.assertEqual(root.subnodes[2].subnodes[0].title, "Grandchild3")
 
     def test_counter(self):
         self.assertEqual(Node.counter, TestNode.counter)
@@ -52,6 +54,29 @@ class TestNode(unittest.TestCase):
     def test_fields(self):
         node = Node(**{"title": "Node", "subnodes": [], "foo": "bar"})
         self.assertEqual(node.fields, {"foo": "bar"})
+    
+    def test_repr(self):
+        node = Node(**{"subnodes": [Node()], "foo": "bar"})
+        self.assertTrue("subnodes=1" in node.__repr__())
+    
+    def test_headless_nodes(self):
+        root = Node()
+        node1 = Node()
+        node2 = Node()
+        node1.add_subnode(node2)
+        root.add_subnodes(node1)
+
+        self.assertTrue("Node-" in root.__repr__())
+        self.assertTrue("Node-" in root.subnodes[0].__repr__())
+        self.assertTrue("Node-" in root.subnodes[0].subnodes[0].__repr__())
+
+        root = Node("a", Node("b", Node("c")))
+        self.assertTrue("llmmanugen.Node(a " in root.__repr__())
+        self.assertTrue("llmmanugen.Node(b " in root.subnodes[0].__repr__())
+        self.assertTrue("llmmanugen.Node(c " in root.subnodes[0].subnodes[0].__repr__())
+
+        root = Node(Node(Node()))
+        self.assertTrue(type(root.subnodes[0].subnodes[0]) is Node)
 
     def test_reset(self):
         self.root.reset()
@@ -70,6 +95,66 @@ class TestNode(unittest.TestCase):
         self.root.add_subnode(new_node)
         self.assertIn(new_node, self.root.subnodes)
         self.assertEqual(new_node._parent, self.root)
+
+    def test_set_subnode(self):
+        self.root.add_subnode(Node("Child3"))
+        self.root.set_subnode(1, Node("Replaced"))
+        self.assertEqual(self.root.subnodes[0].title, "Child1")
+        self.assertEqual(self.root.subnodes[1].title, "Replaced")
+        self.assertEqual(self.root.subnodes[2].title, "Child3")
+    
+    def test_insert_subnode(self):
+        self.root.add_subnode(Node("Child3"))
+        self.root.insert_subnode(1, Node("Inserted"))
+        self.assertEqual(self.root.subnodes[0].title, "Child1")
+        self.assertEqual(self.root.subnodes[1].title, "Inserted")
+        self.assertEqual(self.root.subnodes[2].title, "Child2")
+        self.assertEqual(self.root.subnodes[3].title, "Child3")
+
+    def test_add_magic(self):
+        node = Node() + Node() + Node()
+        self.assertEqual(len(node.subnodes), 2)
+        self.assertEqual(len(node.subnodes[0].subnodes), 0)
+        self.assertEqual(len(node.subnodes[1].subnodes), 0)
+
+        node = (Node() + Node()) + Node()
+        self.assertEqual(len(node.subnodes), 2)
+        self.assertEqual(len(node.subnodes[0].subnodes), 0)
+        self.assertEqual(len(node.subnodes[1].subnodes), 0)
+
+        node = Node() + (Node() + Node())
+
+        self.assertEqual(len(node.subnodes), 1)
+        self.assertEqual(len(node.subnodes[0].subnodes), 1)
+        self.assertEqual(len(node.subnodes[0].subnodes[0].subnodes), 0)
+
+        node = Node("a")
+        node += Node("b")
+        node + Node("c")
+        self.assertEqual(len(node.subnodes), 2)
+
+        # returns the last subnode
+        node = Node("first") > Node("middle") > Node("last")  # node.parent.parent == Node() + (Node() + Node())
+        self.assertEqual(node.title, "last")
+        self.assertEqual(node.parent.title, "middle")
+        self.assertEqual(node.parent.parent.title, "first")
+
+        node = Node("first")
+        node > Node("last")
+        self.assertEqual(node.title, "first")
+        self.assertEqual(node.subnodes[0].title, "last")
+
+    def test_remove_magic(self):
+        node = Node("a") + Node("b") + Node("c") + Node("d")
+        self.assertEqual(len(node.subnodes), 3)
+        node -= 1
+        self.assertEqual(len(node.subnodes), 2)
+        node -= 0
+        self.assertEqual(len(node.subnodes), 1)
+        self.assertTrue("llmmanugen.Node(d " in node.subnodes[0].__repr__())
+
+        node = Node() + Node() - 0
+        self.assertEqual(len(node.subnodes), 0)
 
     def test_next(self):
         self.root.reset()
