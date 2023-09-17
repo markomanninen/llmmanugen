@@ -593,7 +593,7 @@ class Prompt(dict):
   - Uses narrative elements to weave information into a compelling story.
 """
 
-    def __init__(self, data = {}):
+    def __init__(self, data={}):
         """
         Initializes the Prompt class with directives, guidelines, and constraints in data dictionary.
 

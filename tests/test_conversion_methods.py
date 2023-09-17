@@ -20,7 +20,7 @@ class TestManuscriptConversionMethods(unittest.TestCase):
         manuscript1 = Manuscript.from_dictionary(manuscript_dict)
         manuscript2 = Manuscript().from_dictionary(manuscript_dict)
 
-        self.assertTrue(manuscript1.to_dictionary()==manuscript2.to_dictionary())
+        self.assertTrue(manuscript1.to_dictionary() == manuscript2.to_dictionary())
         self.assertTrue(manuscript1.title == "My Manuscript")
         self.assertTrue(manuscript1.title == manuscript2.title)
 

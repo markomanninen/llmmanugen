@@ -85,11 +85,11 @@ for node in root:
 
 ### Boundary Check: `is_at_tree_boundary()`
 - Returns `True` when the current node is at the start or the end of the tree/subtree.
-  
+
 ### Node Indexing
 - Nodes can be accessed using a list of indices through methods like `get_node_by_index()` and `set_current_node_by_index()`.
 - Index lists are relative to the node on which the method is called.
-  
+
 ### Removing Nodes: `remove()` and `remove_subnodes()`
 - The `remove()` method can take in a list of indices to remove a specific node or set of nodes.
 - Providing an empty list or calling `remove()` without arguments removes all subnodes.
@@ -260,7 +260,7 @@ class Node:
             - Returns True if either 'reached_tree_end' or 'reached_tree_start' is True.
         """
         return self.reached_tree_end or self.reached_tree_start
-    
+
     @property
     def title(self):
         """
@@ -280,7 +280,7 @@ class Node:
             title (str, optional): The new title for the node. Defaults to None.
         """
         self._title = title
-    
+
     @property
     def parent(self):
         """
@@ -303,7 +303,7 @@ class Node:
             Node: The current node.
         """
         return self._current_node
-    
+
     @current_node.setter
     def current_node(self, node):
         """
@@ -320,7 +320,7 @@ class Node:
 
         Parameters:
             node (Node): The node to add as a subnode.
-        
+
         Returns:
             Node: Current node for chain behaviour.
 
@@ -480,7 +480,7 @@ class Node:
         """
         return self.subnodes[-1] if self.subnodes else None
 
-    def get_end_node(self, from_root = False):
+    def get_end_node(self, from_root=False):
         """
         Retrieves the deepest last node in the subtree rooted at the current node.
 
@@ -506,7 +506,7 @@ class Node:
                 break
         return end
 
-    def get_root_and_target(self, from_root = True):
+    def get_root_and_target(self, from_root=True):
         """
         Retrieves the root and target nodes based on the current node and an optional flag.
 
@@ -548,7 +548,7 @@ class Node:
                 target = root._current_node
         return root, target
 
-    def get_current_node_index(self, from_root = True):
+    def get_current_node_index(self, from_root=True):
         """
         Retrieves the index path of the current node based on the 'from_root' parameter.
 
@@ -759,6 +759,7 @@ class Node:
             list: A list of tuples, each containing a matching node and its path.
         """
         results = []
+
         def _(subnodes, new_path=[]):
             for i, node in enumerate(subnodes):
                 local_path = new_path + [i]
@@ -784,6 +785,7 @@ class Node:
         if not isinstance(field_values, list):
             field_values = [field_values]
         results = []
+
         def _(subnodes, remaining_fields, new_path=[]):
             for i, node in enumerate(subnodes):
                 if remaining_fields and node.title == remaining_fields[0]:

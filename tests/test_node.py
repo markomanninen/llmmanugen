@@ -120,30 +120,30 @@ class TestNode(unittest.TestCase):
         """
         # Set current node to root using an empty list and verify
         self.root.set_current_node_by_index([])
-        self.assertEqual(self.root.current_node, self.root) #1
+        self.assertEqual(self.root.current_node, self.root)  # 1
 
         # Set current node to first child of root and verify
         self.root.set_current_node_by_index([0])
-        self.assertEqual(self.root.current_node, self.child1) #2
+        self.assertEqual(self.root.current_node, self.child1)  # 2
 
         # Set current node to second grandchild of first child and verify
         self.root.set_current_node_by_index([0, 1])
-        self.assertEqual(self.root.current_node, self.grandchild2) #3
+        self.assertEqual(self.root.current_node, self.grandchild2)  # 3
 
     def test_get_node_by_index(self):
         """
         Test to verify the behavior of the get_node_by_index method.
         """
         # Get root node using an empty list and verify
-        node = self.root.get_node_by_index([]) #1
+        node = self.root.get_node_by_index([])  # 1
         self.assertEqual(node, self.root)
 
         # Get first child of root and verify
-        node = self.root.get_node_by_index([0]) #2
+        node = self.root.get_node_by_index([0])  # 2
         self.assertEqual(node, self.child1)
 
         # Get second grandchild of first child and verify
-        node = self.root.get_node_by_index([0, 1]) #3
+        node = self.root.get_node_by_index([0, 1])  # 3
         self.assertEqual(node, self.grandchild2)
 
     def test_set_current_node_by_index_over_index(self):
@@ -233,53 +233,53 @@ class TestNode(unittest.TestCase):
         # As per docstring, the path should be empty as we are at the root.
         self.root.next()
         path = self.root.get_current_node_index()
-        self.assertEqual(path, []) #1
+        self.assertEqual(path, [])  # 1
 
         # Scenario 2: Invoke from root, default parameter (True)
         # Path should be [0] as child1 is the first child of the root.
         self.root.next()
         path = self.root.get_current_node_index()
-        self.assertEqual(path, [0]) #2
+        self.assertEqual(path, [0])  # 2
 
         # Scenario 3: Invoke from root, default parameter (True)
         # Path should be [0, 0] as grandchild1 is the first child of the first child of the root.
         self.root.next()
         path = self.root.get_current_node_index()
-        self.assertEqual(path, [0, 0]) #3
+        self.assertEqual(path, [0, 0])  # 3
 
         # Scenario 4: Invoke from root, with parameter False
         # The path should be empty as we are at the root.
         path = self.root.get_current_node_index(from_root=False)
-        self.assertEqual(path, [0, 0]) #4
+        self.assertEqual(path, [0, 0])  # 4
 
         # Scenario 5: Invoke from child1, with parameter False
         # Path should be [] as child1 is the root in this context.
         path = self.child1.get_current_node_index(from_root=False)
-        self.assertEqual(path, [0]) #5
+        self.assertEqual(path, [0])  # 5
 
         # Scenario 6: Invoke from grandchild1, with parameter False
         # Path should be [0] as grandchild1 is the first child of child1 in this context.
         path = self.grandchild1.get_current_node_index(from_root=False)
-        self.assertEqual(path, []) #6
+        self.assertEqual(path, [])  # 6
 
         # Scenario 7: Invoke from root, default parameter (True)
         # As per docstring, the path should be empty as we are at the root.
         self.root.reset()
         self.root.next()
         path = self.root.get_current_node_index()
-        self.assertEqual(path, []) #7
+        self.assertEqual(path, [])  # 7
 
         # Scenario 8: Invoke from child1, default parameter (True)
         # Path should be [0] as child1 is the first child of the root.
         self.root.next()
         path = self.child1.get_current_node_index()
-        self.assertEqual(path, [0]) #8
+        self.assertEqual(path, [0])  # 8
 
         # Scenario 9: Invoke from grandchild1, default parameter (True)
         # Path should be [0, 0] as grandchild1 is the first child of the first child of the root.
         self.root.next()
         path = self.grandchild1.get_current_node_index()
-        self.assertEqual(path, [0, 0]) #9
+        self.assertEqual(path, [0, 0])  # 9
 
     def test_get_root_node(self):
         """
@@ -323,7 +323,7 @@ class TestNode(unittest.TestCase):
     def test_pretty_print(self):
         print("Test pretty_print output:")
         self.root.pretty_print()
-    
+
     def test_next_method_called_by_subnode(self):
         """
         Test to verify the behavior of the next method when called by a subnode.
@@ -349,7 +349,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(self.child1.current_node, None)
 
         # First call should return the first grandchild
-        self.assertEqual(self.child1.next(), self.child1) 
+        self.assertEqual(self.child1.next(), self.child1)
 
     def test_prev_method_called_by_root(self):
         """

@@ -25,7 +25,7 @@ class Section(Node):
         summary: Gets or sets the summary of the section.
         content: Gets or sets the content of the section.
         prompt: Gets or sets the prompt of the section.
-        
+
     Subscriptable:
         __getitem__(key): Retrieve an attribute value using a key.
         __setitem__(key, value): Set an attribute value using a key.

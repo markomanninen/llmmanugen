@@ -88,6 +88,6 @@ class TestSection(unittest.TestCase):
         subsection2 = Section("Sub2", {"title": "Sub2.1"})
         mainsection = Section("Main", subsection1, subsection2)
 
-        self.assertTrue(all(type(node) == Section for node in mainsection.subnodes))
-        self.assertTrue(all(type(node) == Section for node in subsection2.subnodes))
-        self.assertTrue(all(type(node) == Section for node in mainsection.subnodes[0].subnodes))
+        self.assertTrue(all(type(node) is Section for node in mainsection.subnodes))
+        self.assertTrue(all(type(node) is Section for node in subsection2.subnodes))
+        self.assertTrue(all(type(node) is Section for node in mainsection.subnodes[0].subnodes))

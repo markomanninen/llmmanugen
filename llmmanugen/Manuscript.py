@@ -659,7 +659,7 @@ class Manuscript(Section):
 
         Returns:
             str: A Markdown-formatted string representing the table of contents, including titles, subtitles, authors, and content.
-        
+
         Example:
             # My Manuscript: Sub title
             by: John Doe
@@ -774,7 +774,7 @@ class Manuscript(Section):
     def to_json(self):
         """
         Converts the Manuscript object and its nested sections to a JSON-formatted string.
-        
+
         Returns:
             str: A JSON-formatted string representing the Manuscript object and its nested sections.
         """

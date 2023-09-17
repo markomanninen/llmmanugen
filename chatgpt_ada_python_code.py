@@ -75,7 +75,7 @@ class Manuscript:
         else:
             if only_at_the_same_level:
                 return "end"
-			
+
             while len(self.current_path) > 1:
                 self.current_path.pop()
                 sections = self.data[self.children_field]
