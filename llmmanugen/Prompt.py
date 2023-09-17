@@ -8,39 +8,40 @@ Guidelines: These shape the tone, structure, and context of the response. They c
 Constraints: These set limitations or boundaries for the response, including length constraints, content restrictions, time, ethics, language, accessibility, legal or regulatory, domain-specific, sensitivity, multimodal constraints, and more.
 
 Example:
-	guidelines = {
-		'Style': 'Formal',
-		'Format': 'Essay',
-		'Audience Awareness': 'Academic Readers'
-	}
-	constraints = {
-		'Length Constraints': '1000 words',
-		'Content Restrictions': 'Exclude slang or colloquial language'
-	}
+    guidelines = {
+        'Style': 'Formal',
+        'Format': 'Essay',
+        'Audience Awareness': 'Academic Readers'
+    }
+    constraints = {
+        'Length Constraints': '1000 words',
+        'Content Restrictions': 'Exclude slang or colloquial language'
+    }
 
-	section_prompt = Prompt({
-			'directives': {'Instruction': 'Write an introduction to the topic of artificial intelligence.'},
-			'guidelines': guidelines,
-			'constraints': constraints
-		}
-	)
+    section_prompt = Prompt({
+            'directives': {'Instruction': 'Write an introduction to the topic of artificial intelligence.'},
+            'guidelines': guidelines,
+            'constraints': constraints
+        }
+    )
 
 Access prompt engineering help and tips from the class variables:
 
 Prompt.
     directives
-	guidelines
-	constraints
-	roles
-	styles
-	formats
-	contexts
-	audience
-	structure
-	tone_and_voice
+    guidelines
+    constraints
+    roles
+    styles
+    formats
+    contexts
+    audience
+    structure
+    tone_and_voice
 
 Schema: {key:str -> value:str (may be a semicolon separated list)}
 """
+
 class Prompt(dict):
     """
     The Prompt class is designed to encapsulate directives, guidelines, and constraints for guiding a large language model's response.
@@ -57,28 +58,28 @@ class Prompt(dict):
         }
 
         section_prompt = Prompt({
-	            'directives': {'Instruction': 'Write an introduction to the topic of artificial intelligence.'},
-	            'guidelines': guidelines,
-	            'constraints': constraints
-			}
+                'directives': {'Instruction': 'Write an introduction to the topic of artificial intelligence.'},
+                'guidelines': guidelines,
+                'constraints': constraints
+            }
         )
 
     Access prompt engineering help and tips from the class variables:
 
-	Prompt.
-	    directives
-		guidelines
-		constraints
-		roles
-		styles
-		formats
-		contexts
-		audience
-		structure
-		tone_and_voice
+    Prompt.
+        directives
+        guidelines
+        constraints
+        roles
+        styles
+        formats
+        contexts
+        audience
+        structure
+        tone_and_voice
 
-	Schema: {key:str -> value:str (may be a semicolon separated list)}
-	"""
+    Schema: {key:str -> value:str (may be a semicolon separated list)}
+    """
 
     directives = """
 ## Example Directives (Keys and contents may vary)
@@ -597,43 +598,43 @@ class Prompt(dict):
 
         Parameters:
             data (dict): The core instruction that guides the language model's response.
-				directives (dict): See more Prompt.directives
-	            guidelines (dict):  See more Prompt.guidelines
-	            constraints (dict): See more Prompt.constraints
+                directives (dict): See more Prompt.directives
+                guidelines (dict):  See more Prompt.guidelines
+                constraints (dict): See more Prompt.constraints
 
-		Example:
-	        guidelines = {
-	            'Style': 'Formal',
-	            'Format': 'Essay',
-	            'Audience Awareness': 'Academic Readers'
-	        }
-	        constraints = {
-	            'Length Constraints': '1000 words',
-	            'Content Restrictions': 'Exclude slang or colloquial language'
-	        }
+        Example:
+            guidelines = {
+                'Style': 'Formal',
+                'Format': 'Essay',
+                'Audience Awareness': 'Academic Readers'
+            }
+            constraints = {
+                'Length Constraints': '1000 words',
+                'Content Restrictions': 'Exclude slang or colloquial language'
+            }
 
-	        section_prompt = Prompt({
-		            'directives': {'Instruction': 'Write an introduction to the topic of artificial intelligence.'},
-		            'guidelines': guidelines,
-		            'constraints': constraints
-				}
-	        )
+            section_prompt = Prompt({
+                    'directives': {'Instruction': 'Write an introduction to the topic of artificial intelligence.'},
+                    'guidelines': guidelines,
+                    'constraints': constraints
+                }
+            )
 
-	    Access prompt engineering help and tips from the class variables:
+        Access prompt engineering help and tips from the class variables:
 
-		Prompt.
-		    directives
-			guidelines
-			constraints
-			roles
-			styles
-			formats
-			contexts
-			audience
-			structure
-			tone_and_voice
+        Prompt.
+            directives
+            guidelines
+            constraints
+            roles
+            styles
+            formats
+            contexts
+            audience
+            structure
+            tone_and_voice
 
-		Prompt.variable schema: {key:str -> value:str (may be a semicolon separated list)}
+        Prompt.variable schema: {key:str -> value:str (may be a semicolon separated list)}
         """
         attributes_to_update = ['directives', 'guidelines', 'constraints']
         for attr in attributes_to_update:

@@ -4,7 +4,7 @@ from .Node import Node
 class Section(Node):
     """
     Represents a section in a manuscript or document hierarchy.
-    
+
     Attributes:
         title (str): The title of the section.
         summary (str, optional): A brief summary of the section.
@@ -12,13 +12,13 @@ class Section(Node):
         prompt (str, optional): A prompt related to the section.
         _created (str): The timestamp when the section was created.
         _updated (str): The timestamp when the section was last updated.
-    
+
     Methods:
         update(title=None, summary=None, content=None, prompt=None): 
             Update the section's attributes and refresh the timestamp.
         _update_timestamp(): 
             Update the timestamp to the current time.
-        
+
     Properties:
         title: Gets or sets the title of the section.
         summary: Gets or sets the summary of the section.
@@ -86,7 +86,7 @@ class Section(Node):
         if completed:
             self._completed = completed
         self._update_timestamp()
-    
+
     @property
     def title(self):
         """
@@ -154,7 +154,7 @@ class Section(Node):
         """
         self._prompt = value
         self._update_timestamp()
-    
+
     @property
     def completed(self):
         """
@@ -189,7 +189,7 @@ class Section(Node):
         Checks if all child nodes and their subnodes are marked as completed.
 
         Returns:
-        bool: True if all child nodes and their subnodes are completed, False otherwise.
+            bool: True if all child nodes and their subnodes are completed, False otherwise.
         """
 
         for node in self.subnodes:
@@ -202,12 +202,11 @@ class Section(Node):
         Counts the total number of words and letters in the content of the current node and optionally its subnodes.
 
         Parameters:
-        - include_all_subsections (bool): Whether to include the word and letter counts of all subnodes. Default is False.
+            - include_all_subsections (bool): Whether to include the word and letter counts of all subnodes. Default is False.
 
         Returns:
-        tuple: A tuple containing the total word count and total letter count.
+            tuple: A tuple containing the total word count and total letter count.
         """
-
         words_count, letters_count = len(self.content.split()), len(self.content)
         if include_all_subsections and self.has_subnodes():
             for node in self.subnodes:
@@ -215,7 +214,7 @@ class Section(Node):
                 words_count += word_count
                 letters_count += letter_count
         return words_count, letters_count
-            
+
     def __getitem__(self, key):
         """
         Retrieves an attribute by key name. Returns None if the attribute does not exist.

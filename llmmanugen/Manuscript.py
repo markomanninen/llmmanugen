@@ -324,8 +324,8 @@ new_manuscript_from_md = Manuscript().from_markdown(markdown_output)
 ```
 
 These examples demonstrate the various functionalities provided by the `Manuscript` class for creating, navigating, and manipulating manuscripts.
-
 """
+
 import json
 from datetime import datetime
 from .Section import Section
@@ -372,19 +372,31 @@ class Manuscript(Section):
     """
     def __init__(self, *sections, **kwargs):
         """
-        Initializes a Manuscript object with a title, optional subtitle, and author.
-        
+        Initialize a Manuscript instance with optional sections and additional keyword arguments.
+
         Parameters:
-            *sections (Section): Sections to include in the manuscript.
-            **kwargs: Additional fields for extended information.
+            - *sections: Zero or more section objects to initialize the Manuscript with.
+            - **kwargs: Additional keyword arguments to set as attributes. 'title' can be set here.
                 title (str): The title of the manuscript.
                 subtitle (str, optional): The subtitle of the manuscript.
                 author (optional): The author of the manuscript.
+
+        Returns:
+            None: This method initializes the instance and does not return a value.
         """
         super().__init__(kwargs.get("title", "Untitled"), *sections)
         self._init(**kwargs)
     
     def _init(self, **kwargs):
+        """
+        Initialize additional fields for the Manuscript instance.
+
+        Parameters:
+            - **kwargs: Additional keyword arguments to set as attributes.
+
+        Returns:
+            None: This method initializes additional fields and does not return a value.
+        """
         self.additional_fields = kwargs
 
     def add_section(self, section=None, **kwargs):
@@ -421,6 +433,15 @@ class Manuscript(Section):
         return self.current_node
 
     def update_current_section(self, **kwargs):
+        """
+        Update the attributes of the current section with the given keyword arguments.
+
+        Parameters:
+            - **kwargs: Keyword arguments representing the attributes to update and their new values.
+
+        Returns:
+            None: This method updates the current section in place and does not return a value.
+        """
         self.get_current_section().update(**kwargs)
 
     def move_to_next_section_and_get_prompts(self, general_instructions=True):
@@ -468,6 +489,15 @@ class Manuscript(Section):
         return result
     
     def set_and_get_current_section_by_index(self, index):
+        """
+        Set the current section based on the given index and return it.
+
+        Parameters:
+            - index (int): The index of the section to set as the current section.
+
+        Returns:
+            object: The section object that has been set as the current section.
+        """
         return self.set_current_node_by_index(index)
     
     def move_to_next_section(self):
@@ -675,10 +705,10 @@ class Manuscript(Section):
         If not found, it looks in the additional_fields dictionary.
 
         Parameters:
-        - name (str): The name of the attribute to get.
+            - name (str): The name of the attribute to get.
 
         Returns:
-        The value of the attribute, or None if the attribute is not found.
+            The value of the attribute, or None if the attribute is not found.
         """
         try:
             return super().__getattr__(name)
@@ -691,10 +721,11 @@ class Manuscript(Section):
         Convert a dictionary to a Manuscript object.
 
         Parameters:
-        - data_dict (dict): Dictionary containing manuscript data.
+            - cls (type): The class on which this method is called. Automatically passed by Python.
+            - data_dict (dict): Dictionary containing manuscript data.
 
         Returns:
-        - Manuscript: Manuscript object initialized with the data from the dictionary.
+            - Manuscript: Manuscript object initialized with the data from the dictionary.
         """
         return parse_dictionary_to_manuscript(cls() if cls == Manuscript else cls, data_dict)
 
@@ -704,10 +735,11 @@ class Manuscript(Section):
         Initializes a Manuscript object from a JSON-formatted string.
 
         Parameters:
-        - json_str (str): The JSON-formatted string representing the manuscript.
+            - cls (type): The class on which this method is called. Automatically passed by Python.
+            - json_str (str): The JSON-formatted string representing the manuscript.
 
         Returns:
-        A Manuscript object initialized with the data from the JSON string.
+            A Manuscript object initialized with the data from the JSON string.
         """
         return parse_dictionary_to_manuscript(cls() if cls == Manuscript else cls, json.loads(json_str))
 
@@ -717,11 +749,12 @@ class Manuscript(Section):
         Initializes a Manuscript object from a Markdown-formatted string.
 
         Parameters:
-        - markdown_str (str): The Markdown-formatted string representing the manuscript.
-        - content_field (str): The field in which to store the content. Default is "content".
+            - cls (type): The class on which this method is called. Automatically passed by Python.
+            - markdown_str (str): The Markdown-formatted string representing the manuscript.
+            - content_field (str): The field in which to store the content. Default is "content".
 
         Returns:
-        A Manuscript object initialized with the data from the Markdown string.
+            A Manuscript object initialized with the data from the Markdown string.
         """
         return parse_markdown_to_manuscript(cls() if cls == Manuscript else cls, markdown_str, content_field)
 
@@ -730,10 +763,10 @@ class Manuscript(Section):
         Converts the Manuscript object to a Markdown-formatted string.
 
         Parameters:
-        - content_field (str): The field from which to retrieve the content. Default is "content".
+            - content_field (str): The field from which to retrieve the content. Default is "content".
 
         Returns:
-        A Markdown-formatted string representing the Manuscript object.
+            A Markdown-formatted string representing the Manuscript object.
         """
         return self.get_contents(content_field)
     

@@ -148,7 +148,7 @@ class Node:
         child1.add_subnode(grandchild1)
         child1.add_subnode(grandchild2)
         root.add_subnode(child1)
-        
+
         # Initialize another child node
         child2 = Node("Child2")
         root.add_subnode(child2)
@@ -202,7 +202,7 @@ class Node:
         Checks if the current node has any subnodes.
 
         Returns:
-        bool: True if the current node has subnodes, False otherwise.
+            bool: True if the current node has subnodes, False otherwise.
         """
         return len(self.subnodes) > 0
 
@@ -211,7 +211,7 @@ class Node:
         Peeks at the next node in the tree traversal without actually moving to it.
 
         Returns:
-        Section: The next Section object in the tree traversal, or None if the end of the tree has been reached.
+            Section: The next Section object in the tree traversal, or None if the end of the tree has been reached.
         """
         if self.reached_tree_end:
             return None
@@ -225,7 +225,7 @@ class Node:
         Peeks at the previous node in the tree traversal without actually moving to it.
 
         Returns:
-        Section: The previous Section object in the tree traversal, or None if the start of the tree has been reached.
+            Section: The previous Section object in the tree traversal, or None if the start of the tree has been reached.
         """
         if self.reached_tree_start:
             return None
@@ -234,7 +234,6 @@ class Node:
             self.next()
         return node
 
-    
     def reset(self):
         """
         Resets the current node and boundary flags to their initial states.
@@ -351,7 +350,7 @@ class Node:
         """
         # Reset the flag since we are going forwards.
         self.reached_tree_start = False
-        
+
         if self.reached_tree_end:
             return None
 
@@ -393,7 +392,7 @@ class Node:
         """
         # Reset the flag since we are going backwards.
         self.reached_tree_end = False
-        
+
         if self.reached_tree_start:
             return None
 
@@ -536,7 +535,7 @@ class Node:
                     parent = parent._parent
                 else:
                     break
-        
+
         if from_root and self._parent:
             root = parent
             target = root._current_node
@@ -572,9 +571,9 @@ class Node:
               For example, [0, 1] means the target node is the second child of the first child of the root.
         """
         root, target = self.get_root_and_target(from_root)
-        
+
         path = []
-        
+
         def traverse(node, current_path):
             nonlocal path
             if node == target:
@@ -587,7 +586,7 @@ class Node:
             return False
 
         traverse(root, [])
-        
+
         return path
 
     def pretty_print(self, indent=0):
@@ -664,7 +663,6 @@ class Node:
             - Calls the 'add_subnode' method for each node to add it as a subnode and set its parent.
 
         Usage Examples:
-
             # Create root node
             root = Node("Root")
 
@@ -693,7 +691,6 @@ class Node:
             - Calls the 'remove' method for each index to remove the corresponding subnode.
 
         Usage Examples:
-
             # Create root node and child nodes
             root = Node("Root")
             child1 = Node("Child1")
@@ -750,6 +747,16 @@ class Node:
         return next_node
 
     def search(self, query, path=None):
+        """
+        Search for nodes whose titles match the given query.
+
+        Parameters:
+            - query (str or re.Pattern): The search query, either a string or a regular expression pattern.
+            - path (list, optional): A list of indices representing the path to start the search from.
+
+        Returns:
+            list: A list of tuples, each containing a matching node and its path.
+        """
         results = []
         def _(subnodes, new_path=[]):
             for i, node in enumerate(subnodes):
@@ -764,6 +771,15 @@ class Node:
         return results
 
     def find_path_by_titles(self, field_values):
+        """
+        Find nodes whose titles match the given list of field values.
+
+        Parameters:
+            - field_values (list or str): A list of field values to match against node titles.
+
+        Returns:
+            list: A list of tuples, each containing a node and its path that matches the field values.
+        """
         if not isinstance(field_values, list):
             field_values = [field_values]
         results = []
