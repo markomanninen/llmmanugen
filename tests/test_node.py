@@ -109,7 +109,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(self.child1.parent, self.root)
         self.assertEqual(self.grandchild1.parent, self.child1)
 
-    def test_get_current_node_index(self):
+    def test_set_get_current_node_by_index(self):
         self.root.set_current_node_by_index([0, 1])
         self.assertEqual(self.root.get_current_node_index(), [0, 1])
     
