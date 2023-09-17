@@ -18,6 +18,21 @@ class TestNode(unittest.TestCase):
         self.child1.add_subnode(self.grandchild1)
         self.child1.add_subnode(self.grandchild2)
 
+    def test_dictionary_init(self):
+        root = Node("Root")
+        child1 = Node("Child1")
+        child2 = Node("Child2")
+        grandchild1 = Node("Grandchild1")
+        grandchild2 = Node("Grandchild2")
+        child3 = Node("Child3", {"title": "Grandchild3"})
+        root.add_subnode(child1)
+        root.add_subnode({"title": "Child2"})
+        child1.add_subnode(grandchild1)
+        child1.add_subnode(grandchild2)
+        root.add_subnodes(child3)
+        print("\n")
+        root.pretty_print()
+
     def test_counter(self):
         self.assertEqual(Node.counter, TestNode.counter)
 
