@@ -171,7 +171,7 @@ class Node:
     """
     int: Class-level variable that keeps track of the number of Node instances created.
     """
-    def __init__(self, title=None, *subnodes):
+    def __init__(self, title=None, *subnodes, **kwargs):
         """
         Initializes a new Node instance.
 
@@ -193,6 +193,10 @@ class Node:
         # It will be replaced if this node is added to the other node by add_subnode
         self._parent = None
         self.subnodes = list(subnodes)
+        # Extend subnodes if keyword arguments has subnodes
+        if "subnodes" in kwargs:
+            self.subnodes.extend(kwargs["subnodes"])
+
         for node in self.subnodes:
             # Subnodes parent is the current node
             node._parent = self
@@ -677,6 +681,8 @@ class Node:
         """
         for node in nodes:
             self.add_subnode(node)
+
+        return self
 
     def remove_subnodes(self, indices_list):
         """
