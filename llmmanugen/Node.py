@@ -120,6 +120,7 @@ for node in root:
 
 import re
 
+
 class Node:
     """
     Represents a node in a tree-like data structure. The Node class allows for
@@ -338,14 +339,14 @@ class Node:
         Resets the reached_tree_start flag to False since we are moving forward.
 
         Returns:
-            Node or None: The next node in the depth-first traversal, or None if 
+            Node or None: The next node in the depth-first traversal, or None if
             reached the end of the tree.
 
         Behavior:
             1. If reached_tree_end is True, returns None.
             2. If the current node has subnodes, moves to the first subnode.
             3. If the current node has no subnodes, moves to the next sibling.
-            4. If there is no next sibling, traverses up the tree to find an ancestor 
+            4. If there is no next sibling, traverses up the tree to find an ancestor
                with an unvisited sibling, or sets reached_tree_end to True if none found.
         """
         # Reset the flag since we are going forwards.

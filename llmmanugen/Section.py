@@ -1,6 +1,7 @@
 from datetime import datetime
 from .Node import Node
 
+
 class Section(Node):
     """
     Represents a section in a manuscript or document hierarchy.
@@ -14,9 +15,9 @@ class Section(Node):
         _updated (str): The timestamp when the section was last updated.
 
     Methods:
-        update(title=None, summary=None, content=None, prompt=None): 
+        update(title=None, summary=None, content=None, prompt=None):
             Update the section's attributes and refresh the timestamp.
-        _update_timestamp(): 
+        _update_timestamp():
             Update the timestamp to the current time.
 
     Properties:

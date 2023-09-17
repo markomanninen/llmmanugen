@@ -1,10 +1,11 @@
 import unittest
 from llmmanugen import Node
 
+
 class TestNode(unittest.TestCase):
 
     counter = 0
-    
+
     def setUp(self):
         self.root = Node("Root")
         self.child1 = Node("Child1")
@@ -59,7 +60,7 @@ class TestNode(unittest.TestCase):
         self.root.next()
         self.assertEqual(self.root.prev(), self.root)
         self.assertEqual(self.root.prev(), None)
-    
+
     def test_next_method(self):
         """
         Test to verify the behavior of the next method.
@@ -112,12 +113,11 @@ class TestNode(unittest.TestCase):
     def test_set_get_current_node_by_index(self):
         self.root.set_current_node_by_index([0, 1])
         self.assertEqual(self.root.get_current_node_index(), [0, 1])
-    
+
     def test_set_current_node_by_index(self):
         """
         Test to verify the behavior of the set_current_node_by_index method.
         """
-        
         # Set current node to root using an empty list and verify
         self.root.set_current_node_by_index([])
         self.assertEqual(self.root.current_node, self.root) #1
@@ -125,7 +125,7 @@ class TestNode(unittest.TestCase):
         # Set current node to first child of root and verify
         self.root.set_current_node_by_index([0])
         self.assertEqual(self.root.current_node, self.child1) #2
-        
+
         # Set current node to second grandchild of first child and verify
         self.root.set_current_node_by_index([0, 1])
         self.assertEqual(self.root.current_node, self.grandchild2) #3
@@ -134,7 +134,6 @@ class TestNode(unittest.TestCase):
         """
         Test to verify the behavior of the get_node_by_index method.
         """
-        
         # Get root node using an empty list and verify
         node = self.root.get_node_by_index([]) #1
         self.assertEqual(node, self.root)
@@ -142,16 +141,15 @@ class TestNode(unittest.TestCase):
         # Get first child of root and verify
         node = self.root.get_node_by_index([0]) #2
         self.assertEqual(node, self.child1)
-        
+
         # Get second grandchild of first child and verify
         node = self.root.get_node_by_index([0, 1]) #3
         self.assertEqual(node, self.grandchild2)
-    
+
     def test_set_current_node_by_index_over_index(self):
         """
         Test to verify the behavior of the set_current_node_by_index method with an out-of-bounds index.
         """
-        
         # Attempt to set current node using an out-of-bounds index
         with self.assertRaises(IndexError):
             self.root.set_current_node_by_index([999])
@@ -160,16 +158,14 @@ class TestNode(unittest.TestCase):
         """
         Test to verify the behavior of the get_node_by_index method with an out-of-bounds index.
         """
-        
         # Attempt to get a node using an out-of-bounds index
         with self.assertRaises(IndexError):
             self.root.get_node_by_index([999])
-    
+
     def test_get_root_and_target(self):
         """
         This test method verifies the behavior of get_root_and_target in various scenarios.
         """
-        
         # Scenario 1: Invoke from root, default parameter (True)
         # According to docstring logic point 1, the root and target should be the root itself
         # as there's no parent for root.
@@ -177,7 +173,7 @@ class TestNode(unittest.TestCase):
         root, target = self.root.get_root_and_target()
         self.assertEqual(root, self.root)
         self.assertEqual(target, self.root)
-        
+
         # Scenario 2: Invoke from child1, default parameter (True)
         # According to docstring logic point 1, the root should be the root of the entire tree,
         # and the target should be the root's current node.
@@ -185,7 +181,7 @@ class TestNode(unittest.TestCase):
         root, target = self.child1.get_root_and_target()
         self.assertEqual(root, self.root)
         self.assertEqual(target, self.child1)
-        
+
         # Scenario 3: Invoke from grandchild1, default parameter (True)
         # According to docstring logic point 1, the root should be the root of the entire tree,
         # and the target should be the root's current node.
@@ -193,7 +189,7 @@ class TestNode(unittest.TestCase):
         root, target = self.grandchild1.get_root_and_target()
         self.assertEqual(root, self.root)
         self.assertEqual(target, self.grandchild1)
-        
+
         # Scenario 4: Invoke from root, with parameter False
         # According to docstring logic point 2, the root and target should be the root itself
         # as there's no parent for root.
@@ -202,7 +198,7 @@ class TestNode(unittest.TestCase):
         root, target = self.root.get_root_and_target(from_root=False)
         self.assertEqual(root, self.root)
         self.assertEqual(target, self.root)
-    
+
     def test_get_root_and_target2(self):
         # Scenario 5: Invoke from child1, with parameter False
         # According to docstring logic point 2, the root should be child1,
@@ -210,20 +206,20 @@ class TestNode(unittest.TestCase):
         child1, target = self.child1.get_root_and_target(from_root=False)
         self.assertEqual(child1, self.child1)
         self.assertEqual(target, None)
-        
+
         self.root.next()
         self.root.next()
         child1, target = self.child1.get_root_and_target(from_root=False)
         self.assertEqual(child1, self.child1)
         self.assertEqual(target, self.child1)
-        
+
         # Scenario 6: Invoke from grandchild1, with parameter False
         # According to docstring logic point 2, the root should be grandchild1,
         # and the target should be None due to unexisting target in the grandchild1 branch.
         grandchild1, target = self.grandchild1.get_root_and_target(from_root=False)
         self.assertEqual(grandchild1, self.grandchild1)
         self.assertEqual(target, self.child1)
-        
+
         self.root.next()
         grandchild1, target = self.grandchild1.get_root_and_target(from_root=False)
         self.assertEqual(grandchild1, self.grandchild1)
@@ -233,70 +229,68 @@ class TestNode(unittest.TestCase):
         """
         This test method verifies the behavior of get_current_node_index in various scenarios.
         """
-        
         # Scenario 1: Invoke from root, default parameter (True)
         # As per docstring, the path should be empty as we are at the root.
         self.root.next()
         path = self.root.get_current_node_index()
         self.assertEqual(path, []) #1
-        
+
         # Scenario 2: Invoke from root, default parameter (True)
         # Path should be [0] as child1 is the first child of the root.
         self.root.next()
         path = self.root.get_current_node_index()
         self.assertEqual(path, [0]) #2
-        
+
         # Scenario 3: Invoke from root, default parameter (True)
         # Path should be [0, 0] as grandchild1 is the first child of the first child of the root.
         self.root.next()
         path = self.root.get_current_node_index()
         self.assertEqual(path, [0, 0]) #3
-        
+
         # Scenario 4: Invoke from root, with parameter False
         # The path should be empty as we are at the root.
         path = self.root.get_current_node_index(from_root=False)
         self.assertEqual(path, [0, 0]) #4
-        
+
         # Scenario 5: Invoke from child1, with parameter False
         # Path should be [] as child1 is the root in this context.
         path = self.child1.get_current_node_index(from_root=False)
         self.assertEqual(path, [0]) #5
-        
+
         # Scenario 6: Invoke from grandchild1, with parameter False
         # Path should be [0] as grandchild1 is the first child of child1 in this context.
         path = self.grandchild1.get_current_node_index(from_root=False)
         self.assertEqual(path, []) #6
-        
+
         # Scenario 7: Invoke from root, default parameter (True)
         # As per docstring, the path should be empty as we are at the root.
         self.root.reset()
         self.root.next()
         path = self.root.get_current_node_index()
         self.assertEqual(path, []) #7
-        
+
         # Scenario 8: Invoke from child1, default parameter (True)
         # Path should be [0] as child1 is the first child of the root.
         self.root.next()
         path = self.child1.get_current_node_index()
         self.assertEqual(path, [0]) #8
-        
+
         # Scenario 9: Invoke from grandchild1, default parameter (True)
         # Path should be [0, 0] as grandchild1 is the first child of the first child of the root.
         self.root.next()
         path = self.grandchild1.get_current_node_index()
         self.assertEqual(path, [0, 0]) #9
-    
+
     def test_get_root_node(self):
         """
         Test to verify the behavior of the get_root_node method.
         """
-        
         # Invoking from the root should return the root itself
         self.assertEqual(self.root.get_root_node(), self.root)
-        
+
         # Invoking from a child should return the ultimate root
         self.assertEqual(self.child1.get_root_node(), self.root)
-        
+
         # Invoking from a grandchild should return the ultimate root
         self.assertEqual(self.grandchild1.get_root_node(), self.root)
 
@@ -304,27 +298,25 @@ class TestNode(unittest.TestCase):
         """
         Test to verify the behavior of the get_last_node method.
         """
-        
         # Invoking from the root should return the last child
         self.assertEqual(self.root.get_last_node(), self.child2)
-        
+
         # Invoking from a child with subnodes should return the last subnode
         self.assertEqual(self.child1.get_last_node(), self.grandchild2)
-        
+
         # Invoking from a child without subnodes should return None
         self.assertEqual(self.child2.get_last_node(), None)
-        
+
     def test_get_end_node(self):
         """
         Test to verify the behavior of the get_end_node method.
         """
-        
         # Invoking from the root with default parameter should return the deepest last node
         self.assertEqual(self.root.get_end_node(), self.child2)
-        
+
         # Invoking from a child with default parameter should return the deepest last node within the child's subtree
         self.assertEqual(self.child1.get_end_node(), self.grandchild2)
-        
+
         # Invoking from the root with parameter False should return the last node of the root
         self.assertEqual(self.child1.get_end_node(from_root=True), self.child2)
 
@@ -336,13 +328,12 @@ class TestNode(unittest.TestCase):
         """
         Test to verify the behavior of the next method when called by a subnode.
         """
-        
         # Set current node to first child
         self.child1.next()
 
         # First call should yield the current node
         self.assertEqual(self.child1.current_node, self.child1)
-        
+
         # First call should return the first grandchild
         self.assertEqual(self.child1.next(), self.grandchild1)
 
@@ -351,15 +342,14 @@ class TestNode(unittest.TestCase):
 
         # Next call should return None (end of subtree)
         self.assertEqual(self.child1.next(), None)
-        
+
         self.child1.reset()
-        
+
         # First call should yield the current node
         self.assertEqual(self.child1.current_node, None)
-        
+
         # First call should return the first grandchild
-        self.assertEqual(self.child1.next(), self.child1)
-            
+        self.assertEqual(self.child1.next(), self.child1) 
 
     def test_prev_method_called_by_root(self):
         """
@@ -377,13 +367,13 @@ class TestNode(unittest.TestCase):
 
         # Next call should return None (start of subtree)
         self.assertEqual(self.root.prev(), self.child1)
-        
+
         # Next call should return None (start of subtree)
         self.assertEqual(self.root.prev(), self.root)
-        
+
         # Next call should return None (start of subtree)
         self.assertEqual(self.root.prev(), None)
-    
+
     def test_prev_method_called_by_subnode(self):
         """
         Test to verify the behavior of the prev method when called by a subnode.
@@ -400,7 +390,7 @@ class TestNode(unittest.TestCase):
 
         # Next call should return None (start of subtree)
         self.assertEqual(self.child1.prev(), None)
-    
+
     def test_next_method_independence_within_tree(self):
         """
         Test to verify that calling next on different subnodes within the same tree works independently.
@@ -408,7 +398,7 @@ class TestNode(unittest.TestCase):
         self.root.next()
         # First call for root should return the first child
         self.assertEqual(self.root.next(), self.child1)
-        
+
         self.child1.next()
         # First call for child1 should return the first grandchild
         self.assertEqual(self.child1.next(), self.grandchild1)
@@ -418,7 +408,7 @@ class TestNode(unittest.TestCase):
 
         # Second call for child1 should return the second grandchild
         self.assertEqual(self.child1.next(), self.grandchild2)
-    
+
     def test_next_prev_method_independence_within_tree(self):
         """
         Test to verify that calling next and prev on different subnodes within the same tree works independently.
@@ -434,7 +424,7 @@ class TestNode(unittest.TestCase):
 
         # First prev call for child1 should return the second grandchild
         self.assertEqual(self.child1.current_node, self.grandchild2)
-        
+
         # First prev call for root should return the second child
         self.assertEqual(self.root.prev(), self.grandchild2)
 
@@ -446,7 +436,7 @@ class TestNode(unittest.TestCase):
 
         # Second prev call for child1 should return the first grandchild
         self.assertEqual(self.child1.prev(), self.child1)
-    
+
     def test_next_prev_boundary_behavior(self):
         """
         Test to verify that next and prev methods correctly set boundary flags and that
@@ -471,7 +461,7 @@ class TestNode(unittest.TestCase):
 
         # Test the same for child1 (subnode)
         self.assertTrue(self.child1.is_at_tree_boundary())
-        
+
         # Navigate to the end of the subtree for child1
         while self.child1.next():
             pass
@@ -485,7 +475,7 @@ class TestNode(unittest.TestCase):
 
         # is_at_tree_boundary should return True again for start boundary
         self.assertTrue(self.child1.is_at_tree_boundary())
-    
+
     def test_prev_cant_access_root_from_child(self):
         """
         Test to verify that calling prev on a child node does not allow traversing up to the root.
@@ -513,7 +503,7 @@ class TestNode(unittest.TestCase):
         while node:
             node = node.next()
             self.assertNotEqual(node, self.child2)
-    
+
     def test_remove_specific_node(self):
         # Test removing a specific node
         self.root.remove([0, 1])  # Should remove grandchild2 under child1
@@ -529,12 +519,12 @@ class TestNode(unittest.TestCase):
         # Test removing with invalid index
         with self.assertRaises(IndexError):
             self.root.remove([0, 10])  # Invalid index
-    
+
     def test_remove_with_empty_indices(self):
         # Test removing with empty index list, should act like remove()
         self.root.remove([])  # Should remove both child1 and child2
         self.assertEqual(len(self.root.subnodes), 0)  # Root should have no subnodes
-    
+
     def test_remove_subnodes_single_indices(self):
         # Creating a simple tree structure
         root = Node("Root")
@@ -583,10 +573,10 @@ class TestNode(unittest.TestCase):
         # Verifying the tree structure after removal
         remaining_child_titles = [node._title for node in root.subnodes]
         self.assertEqual(remaining_child_titles, ["Child1"])
-        
+
         remaining_grandchild_titles = [node._title for node in root.get_node_by_index([0]).subnodes]
         self.assertEqual(remaining_grandchild_titles, ["Grandchild1"])
-    
+
     def test_iteration(self):
         expected_titles = ["Root", "Child1", "Grandchild1", "Grandchild2", "Child2"]
         # First round
@@ -603,7 +593,7 @@ class TestNode(unittest.TestCase):
             pass  # Traverse the entire tree
         with self.assertRaises(StopIteration):
             next(iterator)
-    
+
     def test_has_subnodes(self):
         root = Node("Root")
         child1 = Node("Child1")
@@ -613,7 +603,7 @@ class TestNode(unittest.TestCase):
         child1.add_subnodes(grandchild1, grandchild2)
         root.add_subnodes(child1, child2)
         self.assertEqual((True, True, False), (root.has_subnodes(), child1.has_subnodes(), child2.has_subnodes()))
-    
+
     def test_search(self):
         root = Node("Root")
         child1 = Node("Child1")
@@ -628,7 +618,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(result[0][1], [0, 0])
         self.assertEqual(result[1][1], [0, 1])
         self.assertEqual(len(result), 2)
-    
+
     def test_find_by_titles(self):
         root = Node("Root")
         child1 = Node("Child1")

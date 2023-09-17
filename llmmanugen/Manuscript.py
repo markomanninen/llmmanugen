@@ -331,6 +331,7 @@ from datetime import datetime
 from .Section import Section
 from .lib import parse_markdown_to_manuscript, parse_dictionary_to_manuscript
 
+
 class Manuscript(Section):
     """
     Represents a manuscript composed of multiple sections. Inherits from the Section class.
@@ -653,7 +654,7 @@ class Manuscript(Section):
         """Generates and returns a comprehensive table of contents for the manuscript.
 
         This method performs a depth-first traversal of the manuscript and its sections, generating a Markdown-formatted string
-        that includes the titles, subtitles, authors, and content of all nested sections. The table of contents is indented 
+        that includes the titles, subtitles, authors, and content of all nested sections. The table of contents is indented
         according to the depth of the section within the manuscript structure.
 
         Returns:

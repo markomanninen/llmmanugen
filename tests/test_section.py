@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 from llmmanugen import Section
 
+
 class TestSection(unittest.TestCase):
 
     def setUp(self):
@@ -12,10 +13,10 @@ class TestSection(unittest.TestCase):
         self.assertEqual(self.section._summary, "A brief intro")
         self.assertEqual(self.section._content, "Welcome to the guide.")
         self.assertEqual(self.section._prompt, "Read more")
-        
+
         created_format = datetime.strptime(self.section._created, '%Y-%m-%d %H:%M:%S')
         self.assertIsInstance(created_format, datetime)
-        
+
         updated_format = datetime.strptime(self.section._updated, '%Y-%m-%d %H:%M:%S')
         self.assertIsInstance(updated_format, datetime)
 
@@ -38,12 +39,12 @@ class TestSection(unittest.TestCase):
 
     def test_update_method(self):
         self.section.update(title="Updated Intro", summary="Updated Summary", content="Updated Content", prompt="Updated Prompt")
-        
+
         self.assertEqual(self.section._title, "Updated Intro")
         self.assertEqual(self.section._summary, "Updated Summary")
         self.assertEqual(self.section._content, "Updated Content")
         self.assertEqual(self.section._prompt, "Updated Prompt")
-        
+
         updated_format = datetime.strptime(self.section._updated, '%Y-%m-%d %H:%M:%S')
         self.assertIsInstance(updated_format, datetime)
 
@@ -75,7 +76,7 @@ class TestSection(unittest.TestCase):
         self.assertEqual(self.section._title, "Set via item")
         updated_format = datetime.strptime(self.section._updated, '%Y-%m-%d %H:%M:%S')
         self.assertIsInstance(updated_format, datetime)
-    
+
     def test_count_content_words_and_letters_method(self):
         section = Section("Introduction", content="Set content to the introduction.")
         section.add_subnode(Section("Background", content="Content for the background."))

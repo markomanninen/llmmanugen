@@ -42,6 +42,7 @@ Prompt.
 Schema: {key:str -> value:str (may be a semicolon separated list)}
 """
 
+
 class Prompt(dict):
     """
     The Prompt class is designed to encapsulate directives, guidelines, and constraints for guiding a large language model's response.

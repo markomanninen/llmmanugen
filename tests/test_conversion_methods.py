@@ -2,6 +2,7 @@ import unittest
 import json
 from llmmanugen import Manuscript, Section
 
+
 class TestManuscriptConversionMethods(unittest.TestCase):
 
     def test_from_and_to_dictionary(self):
@@ -22,7 +23,7 @@ class TestManuscriptConversionMethods(unittest.TestCase):
         self.assertTrue(manuscript1.to_dictionary()==manuscript2.to_dictionary())
         self.assertTrue(manuscript1.title == "My Manuscript")
         self.assertTrue(manuscript1.title == manuscript2.title)
-    
+
     def test_from_json(self):
         json_str = json.dumps({
             "title": "My Manuscript",
@@ -76,7 +77,7 @@ class TestManuscriptConversionMethods(unittest.TestCase):
         manuscript.add_subnode(section2)
 
         markdown_str = manuscript.to_markdown()
-        
+
         # Assuming to_markdown is implemented correctly
         self.assertIsInstance(markdown_str, str)
         self.assertTrue("My Manuscript" in markdown_str)

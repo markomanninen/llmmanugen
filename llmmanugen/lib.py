@@ -42,6 +42,7 @@ def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="co
     content_lines = []
 
     def set_content(section, lines):
+
         content = '\n'.join(lines).strip()
         if content:
             setattr(section, content_field, content)
@@ -90,6 +91,7 @@ def parse_dictionary_to_manuscript(manuscript_instance, data):
         Manuscript: The populated Manuscript instance.
     """
     def dictionary_to_sections(sections):
+
         """
         Convert a list of dictionaries to a list of Section objects.
 

@@ -8,6 +8,7 @@ import os
 import re
 from datetime import datetime
 
+
 class Manuscript:
 
     def __init__(self, data, title_field="title", children_field="sections"):

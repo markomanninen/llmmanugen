@@ -1,6 +1,7 @@
 import unittest
 from llmmanugen import Manuscript, Section
 
+
 class TestManuscript(unittest.TestCase):
 
     def setUp(self):
@@ -74,7 +75,7 @@ Welcome
 
 Content Here"""
         self.assertEqual(contents, expected_contents)
-    
+
     def test_headings(self):
         self.manuscript.add_section(Section("Chapter 1", Section("Chapter 1.1", Section("Chapter 1.1.1"), Section("Chapter 1.1.2"))))
         self.manuscript.add_section(Section("Chapter 2"))
