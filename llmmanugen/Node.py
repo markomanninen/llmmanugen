@@ -192,10 +192,12 @@ class Node:
         # Parent is by default None
         # It will be replaced if this node is added to the other node by add_subnode
         self._parent = None
-        self.subnodes = list(subnodes)
+        self.subnodes = []
+        if subnodes:
+            self.add_subnodes(*subnodes)
         # Extend subnodes if keyword arguments has subnodes
         if "subnodes" in kwargs:
-            self.subnodes.extend(kwargs["subnodes"])
+            self.add_subnodes(*kwargs["subnodes"])
 
         for node in self.subnodes:
             # Subnodes parent is the current node
@@ -318,20 +320,34 @@ class Node:
         """
         self._current_node = node
 
-    def add_subnode(self, node):
+    def add_subnode(self, node=None, **kwargs):
         """
-        Adds a subnode to the current node's list of subnodes and sets its parent.
+        Append a subnode to the current node's 'subnodes' list and set its parent to the current node.
 
         Parameters:
-            node (Node): The node to add as a subnode.
+            - node (Node or dict, optional): The node to append as a subnode. Can also be a dictionary to create a new Node.
+            - **kwargs: Keyword arguments to create a new Node if 'node' is not provided.
 
         Returns:
-            Node: Current node for chain behaviour.
+            Node: The current node, allowing for method chaining.
 
-        Logic Explained:
-            - Sets the parent of the given node to the current node.
-            - Appends the given node to the 'subnodes' list of the current node.
+        Raises:
+            - TypeError: If 'node' is neither a Node object nor a dictionary.
+            - ValueError: If 'node' is not provided and 'kwargs' is empty.
+
+        Note:
+            If 'node' is a dictionary, it will be converted to a Node object.
         """
+        if not isinstance(node, Node) and not isinstance(node, dict):
+            raise TypeError("Node must be of type Node object or dictionary")
+        if not node:
+            if kwargs:
+                node = kwargs
+            else:
+                raise ValueError("Node is mandatory")
+        # All dictionary are translated to the the type of Node
+        if isinstance(node, dict):
+            node = Node(**node)
         node._parent = self
         self.subnodes.append(node)
         return self
