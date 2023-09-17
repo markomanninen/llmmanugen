@@ -3,6 +3,7 @@ from datetime import datetime
 from .Section import Section
 
 def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="content"):
+
     """
     Parses a Markdown-formatted text to create a Manuscript object with nested Section objects.
 
@@ -77,6 +78,7 @@ def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="co
     return manuscript_instance
 
 def parse_dictionary_to_manuscript(manuscript_instance, data):
+
     """
     Parse a dictionary to populate a Manuscript instance.
 

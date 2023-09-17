@@ -90,4 +90,3 @@ class TestSection(unittest.TestCase):
         self.assertTrue(all(type(node) == Section for node in mainsection.subnodes))
         self.assertTrue(all(type(node) == Section for node in subsection2.subnodes))
         self.assertTrue(all(type(node) == Section for node in mainsection.subnodes[0].subnodes))
-

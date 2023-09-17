@@ -247,7 +247,7 @@ class Node:
         self.reached_tree_end = False
         self.reached_tree_start = True
         return self
-    
+
     def is_at_tree_boundary(self):
         """
         Checks whether the current node is at either boundary of the tree.
@@ -410,7 +410,7 @@ class Node:
             else:
                 self._current_node = parent
         return self._current_node
-    
+
     def set_current_node_by_index(self, index):
         """
         Sets the current node based on a given index path.
@@ -465,7 +465,7 @@ class Node:
         """
         root, _ = self.get_root_and_target(True)
         return root
-    
+
     def get_last_node(self):
         """
         Retrieves the last subnode of the current node, if any.
@@ -478,7 +478,7 @@ class Node:
             - Returns the last element if the list is not empty; otherwise, returns None.
         """
         return self.subnodes[-1] if self.subnodes else None
-    
+
     def get_end_node(self, from_root = False):
         """
         Retrieves the deepest last node in the subtree rooted at the current node.
@@ -504,7 +504,7 @@ class Node:
             else:
                 break
         return end
-    
+
     def get_root_and_target(self, from_root = True):
         """
         Retrieves the root and target nodes based on the current node and an optional flag.
@@ -556,7 +556,7 @@ class Node:
                               otherwise, starts from the current node itself. Default is True.
 
         Returns:
-            list: A list of integers representing the index path to the current node, 
+            list: A list of integers representing the index path to the current node,
                   either from the ultimate root or the current node based on 'from_root'.
 
         Logic Explained:
@@ -609,7 +609,7 @@ class Node:
         Returns a string representation of the current node.
 
         Returns:
-            str: The title of the node if set, otherwise a default string containing 
+            str: The title of the node if set, otherwise a default string containing
             the node's internal ID and its Python object ID.
 
         Behavior:
@@ -617,7 +617,7 @@ class Node:
             2. If no title is set, returns a string in the format "Node-{internal ID} (ID: {Python object ID})".
         """
         return self._title if self._title else f"Node-{self._id} (ID: {id(self)})"
-    
+
     def remove(self, indices=None):
         """
         Removes a node based on its index path or all subnodes of the current node.
@@ -650,7 +650,7 @@ class Node:
         else:
             # Remove all subnodes
             self.subnodes = []
-    
+
     def add_subnodes(self, *nodes):
         """
         Adds multiple subnodes to the current node's list of subnodes and sets their parent.
@@ -676,7 +676,7 @@ class Node:
         """
         for node in nodes:
             self.add_subnode(node)
-    
+
     def remove_subnodes(self, indices_list):
         """
         Removes multiple subnodes from the current node's list of subnodes based on their indices.
@@ -712,7 +712,7 @@ class Node:
                 del node_to_remove.subnodes[index[-1]]
             else:
                 del self.subnodes[index]
-    
+
     def __iter__(self):
         """
         Returns the iterator object (self).

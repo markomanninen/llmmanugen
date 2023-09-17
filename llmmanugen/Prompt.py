@@ -646,3 +646,4 @@ class Prompt(dict):
 
     def __str__(self):
         return f"Prompt(directives: {self.get('directives', {})}, guidelines: {self.get('guidelines', {})}, constraints: {self.get('constraints', {})})"
+    

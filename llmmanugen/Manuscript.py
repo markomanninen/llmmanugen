@@ -334,12 +334,12 @@ from .lib import parse_markdown_to_manuscript, parse_dictionary_to_manuscript
 class Manuscript(Section):
     """
     Represents a manuscript composed of multiple sections. Inherits from the Section class.
-    
+
     Attributes:
         subtitle (str): The subtitle of the manuscript.
         author: The author of the manuscript.
         additional_fields (dict): Additional metadata or information.
-    
+
     Usage:
         # Create individual sections for the manuscript
         intro = Section("Introduction", content="This is the introduction.")
@@ -386,7 +386,7 @@ class Manuscript(Section):
         """
         super().__init__(kwargs.get("title", "Untitled"), *sections)
         self._init(**kwargs)
-    
+
     def _init(self, **kwargs):
         """
         Initialize additional fields for the Manuscript instance.
@@ -413,7 +413,7 @@ class Manuscript(Section):
             self.add_subnode(section)
         else:
             raise TypeError("Section must be type of Section")
-    
+
     def add_sections(self, *sections):
         """Adds one or more Section/dictionary objects to the manuscript.
 
@@ -423,7 +423,7 @@ class Manuscript(Section):
             *sections (Section|dict): Section/dictionary object(s) to add to the manuscript.
         """
         self.add_subnodes(*(section if isinstance(section, Section) else Section(**section) for section in sections))
-    
+
     def get_current_section(self):
         """Returns the current section in the manuscript.
 
@@ -468,7 +468,7 @@ class Manuscript(Section):
                 'prompt': 'Provide some background.'
             },
             'general_instructions': {
-                'guidelines': 'Keep it concise.', 
+                'guidelines': 'Keep it concise.',
                 'constraints': 'Max 300 words'
             }
         }
@@ -487,7 +487,7 @@ class Manuscript(Section):
                 "constraints": self.constraints
             }
         return result
-    
+
     def set_and_get_current_section_by_index(self, index):
         """
         Set the current section based on the given index and return it.
@@ -499,7 +499,7 @@ class Manuscript(Section):
             object: The section object that has been set as the current section.
         """
         return self.set_current_node_by_index(index)
-    
+
     def move_to_next_section(self):
         """Moves to the next section in the manuscript and returns it.
 
@@ -547,7 +547,7 @@ class Manuscript(Section):
             str: The title of the current section.
         """
         return self.get_current_section().title
-    
+
     def get_current_completed(self):
         """Returns the title of the current section in the manuscript.
 
@@ -555,7 +555,7 @@ class Manuscript(Section):
             str: The title of the current section.
         """
         return self.get_current_section().completed
-    
+
     def set_current_content(self, content):
         """
         Sets the content of the current section.
@@ -641,7 +641,7 @@ class Manuscript(Section):
     def __str__(self):
         """Returns a string representation of the Manuscript object, consisting of the title and optionally the subtitle.
 
-        This method overrides the built-in __str__ method to provide a custom string representation of the Manuscript object. 
+        This method overrides the built-in __str__ method to provide a custom string representation of the Manuscript object.
         If a subtitle is present, it will be included in the format "Title: Subtitle". Otherwise, only the title will be returned.
 
         Returns:
@@ -769,7 +769,7 @@ class Manuscript(Section):
             A Markdown-formatted string representing the Manuscript object.
         """
         return self.get_contents(content_field)
-    
+
     def to_json(self):
         """
         Converts the Manuscript object and its nested sections to a JSON-formatted string.
@@ -783,7 +783,7 @@ class Manuscript(Section):
         """
         Converts the Manuscript object and its nested sections to a dictionary.
 
-        The method traverses the tree-like structure of the Manuscript object, converting each node and its subnodes to dictionaries. 
+        The method traverses the tree-like structure of the Manuscript object, converting each node and its subnodes to dictionaries.
 
         Returns:
             dict: The Manuscript object and its nested sections as a single dictionary.
