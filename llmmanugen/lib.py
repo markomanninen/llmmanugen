@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from .Section import Section
 
 def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="content"):
     """
@@ -9,29 +10,28 @@ def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="co
     It then recursively constructs Section objects for each section and its sub-sections, adding them to a Manuscript object.
 
     Parameters:
-    - md_text (str): The Markdown-formatted text representing the manuscript and its sections.
-    - content_field (str): The field in which to store the content. Default is "content".
+        - manuscript_instance (Manuscript): The Manuscript instance to populate.
+        - md_text (str): The Markdown-formatted text representing the manuscript and its sections.
+        - content_field (str): The field in which to store the content. Default is "content".
 
     Returns:
-    Manuscript: A Manuscript object initialized with the data from the Markdown text.
+        Manuscript: A Manuscript object initialized with the data from the Markdown text.
 
     Example Markdown Input:
-    ```
-    # Sample Manuscript
-    ## Introduction
-    This is the introduction.
-    ## Background
-    This is the background.
-    ```
+        ```
+        # Sample Manuscript
+        ## Introduction
+        This is the introduction.
+        ## Background
+        This is the background.
+        ```
 
     Notes:
-    - The first line is assumed to be the title of the manuscript.
-    - Subsequent lines starting with '#' characters denote section titles.
-    - The number of '#' characters indicates the nesting level of the section.
-    - Lines not starting with '#' characters are considered content for the most recently defined section.
+        - The first line is assumed to be the title of the manuscript.
+        - Subsequent lines starting with '#' characters denote section titles.
+        - The number of '#' characters indicates the nesting level of the section.
+        - Lines not starting with '#' characters are considered content for the most recently defined section.
     """
-    from .Section import Section
-
     lines = md_text.strip().split('\n')
     manuscript_title = lines[0].replace('# ', '')
     manuscript_instance.title = manuscript_title
@@ -78,30 +78,28 @@ def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="co
 
 def parse_dictionary_to_manuscript(manuscript_instance, data):
     """
-    Convert a dictionary to a Manuscript object.
+    Parse a dictionary to populate a Manuscript instance.
 
     Parameters:
-    - data (dict): Dictionary containing manuscript data.
+        - manuscript_instance (Manuscript): The Manuscript instance to populate.
+        - data (dict): The dictionary containing manuscript data.
 
     Returns:
-    - Manuscript: Manuscript object initialized with the data from the dictionary.
+        Manuscript: The populated Manuscript instance.
     """
-    from .Section import Section
-
     def dictionary_to_sections(sections):
         """
         Convert a list of dictionaries to a list of Section objects.
 
         Parameters:
-        - sections (list): List of dictionaries, each representing a section.
+            - sections (list): A list of dictionaries, each representing a section.
 
         Returns:
-        - list: List of Section objects.
+            list: A list of Section objects.
         """
         section_objects = []
         for section in sections:
-            title = section.get('title', '')
-            sub_sections = section.get('sections', [])
+
             created = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             kwdict = {
                 'summary': section.get('summary', ''),
@@ -111,12 +109,19 @@ def parse_dictionary_to_manuscript(manuscript_instance, data):
                 'created': section.get('created', created),
                 'updated': section.get('updated', section.get('created', created))
             }
+
+            sub_sections = section.get('sections', [])
             if sub_sections:
                 sub_sections = dictionary_to_sections(sub_sections)
-            section_objects.append(Section(title, *sub_sections, **kwdict))
+
+            section_objects.append(Section(section.get('title', ''), *sub_sections, **kwdict))
+
         return section_objects
+
     manuscript_instance.title = data.get("title", "Untitled")
     manuscript_instance._init(**{k: v for k, v in data.items() if k not in ["title", "sections"]})
+
     if "sections" in data:
         manuscript_instance.add_sections(*dictionary_to_sections(data["sections"]))
+
     return manuscript_instance
