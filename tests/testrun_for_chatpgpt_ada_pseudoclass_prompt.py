@@ -48,7 +48,7 @@ class Manuscript:
                 if self.children_field in section:
                     section = section[self.children_field]
                 section = section[index]
-            except:
+            except (IndexError, KeyError):
                 return None
         return section
 
