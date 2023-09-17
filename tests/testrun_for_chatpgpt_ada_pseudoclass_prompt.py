@@ -5,6 +5,7 @@
 # Importing required libraries
 import json
 import os
+import re
 from datetime import datetime
 
 class Manuscript:
@@ -143,12 +144,11 @@ class Manuscript:
 # Stop at this point for user input about extending the class with markdown exporter and search utilities
 # Will proceed with the wizard steps after user input
 
-import re
-
 # Extending the Manuscript class with markdown exporter and search utilities
 class Manuscript(Manuscript):
 
     def to_md(self, content_field=None, directory=None):
+
         md = []
 
         def _md(subsection, level):
@@ -169,6 +169,7 @@ class Manuscript(Manuscript):
         return filename, markdown_string
 
     def search(self, query, field=None, path=None):
+
         search_field = field or self.title_field
         results = []
 
@@ -189,7 +190,9 @@ class Manuscript(Manuscript):
         return results
 
     def find_path_indices(self, field_values):
+
         def _find(subsections, remaining_fields, new_path=[]):
+
             for i, section in enumerate(subsections):
                 if section[self.title_field] == remaining_fields[0]:
                     local_path = new_path + [i]
@@ -270,4 +273,4 @@ assert search_results[0][m.children_field]['title'] == "Chapter 1"
 path_indices = m.find_path_indices(["Chapter 2", "Section 2.1"])
 assert path_indices == [2, 0]
 
-"Tests passed."
+print("Tests passed.")
