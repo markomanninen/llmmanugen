@@ -8,6 +8,11 @@ Use cases:
 
 1. Use with ChatGPT + Advanced Data Analysis plug-in
 2. Use with ChatGPT + Noteable plug-in
+  2.1. Node Class
+  2.2. Section Class
+  2.3. Prompt Class
+  2.4. Manuscript Class
+  2.5. Extending Manuscript Class
 3. Use locally using ChatGPT in autopilot mode (coming...)
 
 # 1. Use with ChatGPT + Advanced Data Analysis plug-in
@@ -17,6 +22,26 @@ Please read [ChatGPT + ADA Manual](https://github.com/markomanninen/llmmanugen/b
 # 2. Use with ChatGPT + Noteable plug-in
 
 Use the [initial prompt](https://github.com/markomanninen/llmmanugen/blob/main/chatgpt_noteable_initialization_prompt.txt) with Noteable plug-in activated. Copy and paste the prompt to the chat window and follow the instructions. Learn by interacting with the environment.
+
+## 2.1 Node Class
+
+
+
+## 2.2 Section Class
+
+
+
+## 2.3 Prompt Class
+
+
+
+## 2.4 Manuscript Class
+
+
+
+## 2.5 Extending Manuscript Class
+
+
 
 # PROMPT - START WIZARD
 
