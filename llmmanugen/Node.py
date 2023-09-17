@@ -184,6 +184,7 @@ class Node:
             - Increments the class-level 'counter' attribute.
             - Initializes '_title', '_id', and '_parent' attributes.
             - Populates 'subnodes' list and sets their parent to this node.
+            - Populates 'fields' dictionary that contains all other than title and subnodes fields.
             - Invokes 'reset' method to initialize state flags.
         """
         Node.counter += 1
@@ -199,10 +200,6 @@ class Node:
         if "subnodes" in kwargs:
             self.add_subnodes(*kwargs["subnodes"])
         self.fields = {k: v for k, v in kwargs.items() if k not in ["title", "subnodes"]}
-
-        for node in self.subnodes:
-            # Subnodes parent is the current node
-            node._parent = self
         self.reset()
 
     def has_subnodes(self):
