@@ -625,6 +625,7 @@ class Manuscript(Section):
         current_section = self.get_current_section()
         current_title = current_section.title if current_section else "Untitled"
         current_section = self.get_current_section()
+
         def _(sections, level, prefix=''):
             for i, section in enumerate(sections):
                 is_last = i == len(sections) - 1
@@ -684,6 +685,7 @@ class Manuscript(Section):
             This is the conclusion content.
         """
         contents = []
+
         def traverse(node, indent=0):
             if indent:
                 contents.append("")

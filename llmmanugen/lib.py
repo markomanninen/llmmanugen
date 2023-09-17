@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from .Section import Section
 
+
 def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="content"):
 
     """
@@ -77,6 +78,7 @@ def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="co
     set_content(current_section, content_lines)
 
     return manuscript_instance
+
 
 def parse_dictionary_to_manuscript(manuscript_instance, data):
 

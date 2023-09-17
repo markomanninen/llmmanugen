@@ -142,8 +142,6 @@ class Manuscript:
         _toc(self.data[self.children_field], level=1)
         return '\n'.join(toc)
 
-# Stop at this point for user input about extending the class with markdown exporter and search utilities
-# Will proceed with the wizard steps after user input
 
 # Extending the Manuscript class with markdown exporter and search utilities
 class Manuscript(Manuscript):
@@ -204,9 +202,8 @@ class Manuscript(Manuscript):
 
         return _find(self.data[self.children_field], field_values)
 
-# Testing the Manuscript class and its methods
 
-# Test data
+# Testing the Manuscript class and its methods
 test_data = {
     "title": "Test Manuscript",
     "sections": [
@@ -227,7 +224,7 @@ test_data = {
 m = Manuscript(test_data)
 
 # Test: validate_schema
-assert m.validate_schema(test_data) == True
+assert m.validate_schema(test_data) is True
 
 # Test: reset_current_section_path and get_current_section
 m.reset_current_section_path([1, 0])

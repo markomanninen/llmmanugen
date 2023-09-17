@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import re
 
+
 class Manuscript:
 
     def __init__(self, data, title_field="title", children_field="sections"):
@@ -40,7 +41,7 @@ class Manuscript:
                 if self.children_field in section:
                     section = section[self.children_field]
                 section = section[index]
-            except:
+            except (IndexError, KeyError):
                 return None
         return section
 
@@ -119,6 +120,7 @@ class Manuscript:
         toc = []
         current_section = self.get_current_section()
         current_title = current_section[self.title_field] if current_section else ""
+
         def _(sections, level, prefix=''):
             for i, section in enumerate(sections):
                 is_last = i == len(sections) - 1
@@ -133,6 +135,7 @@ class Manuscript:
 
     def to_md(self, content_field=None, directory=None):
         md = []
+
         def _(subsection, level):
             for section in subsection:
                 md.append(f"{'#' * level} {section[self.title_field]}")
@@ -151,6 +154,7 @@ class Manuscript:
     def search(self, query, field=None, path=None):
         results = []
         search_field = field or self.title_field
+
         def _(sections, new_path=[]):
             for i, section in enumerate(sections):
                 local_path = new_path + [i]
@@ -164,6 +168,7 @@ class Manuscript:
         return results
 
     def find_path_indices(self, field_values):
+
         def _(subsections, remaining_fields, new_path=[]):
             for i, section in enumerate(subsections):
                 if section[self.title_field] == remaining_fields[0]:
