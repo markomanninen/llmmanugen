@@ -218,7 +218,7 @@ class Node:
         subnodes = []
         for arg in args:
             # The last string in the arguments will be the one left for the title
-            if isinstance(arg, str):
+            if isinstance(arg, str) or isinstance(arg, int) or isinstance(arg, float):
                 title = arg
             elif isinstance(arg, Node) or isinstance(arg, dict):
                 subnodes.append(arg)
@@ -242,12 +242,37 @@ class Node:
     
     def reset(self):
         """
-        Resets the current node and boundary flags to their initial states.
+        Reset the current node and boundary flags to their initial states relative to the node where the method is called.
 
-        Logic Explained:
-            - Sets '_current_node' to None.
-            - Sets 'reached_tree_end' to False.
-            - Sets 'reached_tree_start' to True.
+        Returns:
+            Node: The current node instance relative to which the reset is performed, allowing for method chaining.
+
+        Behavior:
+            - Sets the internal '_current_node' attribute to None. Note: 'current_node' is set to None after reset, and only calling 'root.next()' will set 'current_node' to 'root'.
+            - Sets the 'reached_tree_end' flag to False.
+            - Sets the 'reached_tree_start' flag to True.
+            - Resets '_insert_index' and '_remove_index' to None.
+            - The reset is local to the node where the method is called and does not propagate to parent or child nodes.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+
+            # Traverse the tree starting from root
+            root.next()  # Sets 'current_node' to 'root'
+            root.next()  # Sets 'current_node' to 'child1'
+
+            # Reset the tree traversal state for 'child1'
+            child1.reset()  # Returns 'child1', resets traversal flags and current node locally
+
+            # Demonstrate that the reset on 'child1' did not affect 'root'
+            root.next()  # Traverses 'current_node' to 'child2'
+
+            # Demonstrate that the reset on 'child1' is local
+            child1.next()  # Traverses 'current_node' to 'child1', the starting node
         """
         self._insert_index = None
         self._remove_index = None
@@ -258,14 +283,50 @@ class Node:
 
     def has_subnodes(self):
         """
-        Checks if the current node has any subnodes.
+        Determine if the current node contains any subnodes.
 
         Returns:
-            bool: True if the current node has subnodes, False otherwise.
+            bool: True if the current node has one or more subnodes; otherwise, False.
+
+        Behavior:
+            - Checks the length of the 'subnodes' list attribute of the current node.
+            - Returns True if the length is greater than zero, indicating the presence of subnodes.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            root.add_subnodes(child1)
+            # Check if root has subnodes
+            has_subnodes = root.has_subnodes()  # Returns True
+            # Check if child1 has subnodes
+            has_subnodes = child1.has_subnodes()  # Returns False
         """
         return len(self.subnodes) > 0
 
     def get_subnodes(self):
+        """
+        Retrieve the list of subnodes for the current node.
+
+        Returns:
+            list: A list of subnodes belonging to the current node.
+
+        Behavior:
+            - Directly returns the 'subnodes' attribute of the current node, which is a list containing all its subnodes.
+            - The 'subnodes' attribute can also be accessed directly using 'node.subnodes'.
+            - Subnodes can be added or modified using the 'add_subnode(s)', 'insert_subnode(s)', and 'set_subnode' methods.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+            # Get the list of subnodes
+            subnodes_list = root.get_subnodes()  # Returns [child1, child2]
+            # Alternatively
+            subnodes_list = root.subnodes  # Returns [child1, child2]
+        """
         return self.subnodes
 
     def peek_next(self):
@@ -345,7 +406,16 @@ class Node:
         Retrieve the title of the node.
 
         Returns:
-            str: The node's title.
+            str: The title of the node.
+
+        Behavior:
+            - Accesses the internal '_title' attribute to return the title.
+
+        Examples:
+            # Initialize a node with a title
+            node = Node("MyTitle")
+            # Retrieve the title
+            node_title = node.title  # Returns 'MyTitle'
         """
         return self._title
 
@@ -353,6 +423,8 @@ class Node:
     def title(self, title=None):
         """
         Set the title of the node.
+
+        If node title is None, the __str__ representation will use autoincrement id for the part of the label.
 
         Args:
             title (str, optional): The new title for the node. Defaults to None.
@@ -371,11 +443,18 @@ class Node:
         Retrieve the parent node of the current node.
 
         Returns:
-            Node or None: The parent node, or None if the node is the root.
+            Node or None: The parent node of the current node, or None if the node is the root.
 
         Behavior:
-            - Retrieves the value from the private attribute '_parent'.
-            - The '_parent' attribute is set during initialization or when the node is added as a subnode to another node.
+            - Returns the value stored in the private attribute '_parent', which is set either during initialization or when added as a subnode to another node.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child = Node("Child")
+            root.add_subnodes(child)
+            # Retrieve the parent of 'child'
+            parent_node = child.parent  # Returns 'root'
         """
         return self._parent
 
@@ -515,7 +594,8 @@ class Node:
             child2 = Node('Child2')
             root.add_subnodes(child1, child2)
             # Traverse the tree using the 'next' method
-            next_node = root.next()  # Returns the root node on the first call
+            root_node = root.next()  # Returns the root node on the first call
+            child1_node = root.next()  # Returns the child1 node on the second call
         """
         # Reset the flag since we are going forwards.
         self.reached_tree_start = False
@@ -541,6 +621,70 @@ class Node:
                             return None
                         self._current_node = parent
                         parent = parent._parent
+        return self._current_node
+
+    def get_path(self):
+        """
+        Retrieve the path from the root to the current node as a list of indices.
+
+        Returns:
+            list: A list of indices representing the path from the root to the current node.
+
+        Behavior:
+            - Initializes an empty list 'path' to store the indices.
+            - Iteratively traverses up the tree from the current node to the root.
+            - Inserts the index of each node in its parent's subnodes list at the beginning of 'path'.
+            - Returns 'path'.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            grandchild1 = Node("Grandchild1")
+            child1.add_subnodes(grandchild1)
+            root.add_subnodes(child1, child2)
+
+            # Get the path for grandchild1
+            path = grandchild1.get_path()  # Returns [0, 0]
+        """
+        this = self
+        parent = this.parent
+        path = []
+        while parent:
+            path.insert(0, parent.subnodes.index(this))
+            this = parent
+            parent = parent.parent
+        return path
+
+    def end(self, from_root=False):
+        """
+        Set the current node to the deepest last node in the subtree rooted at the current node.
+
+        Parameters:
+            from_root (bool): If True, considers the ultimate root as the starting point; otherwise, starts from the current node. Default is False.
+
+        Returns:
+            Node: The deepest last node in the subtree.
+
+        Behavior:
+            - Calls 'get_end_node' to retrieve the deepest last node in the subtree.
+            - Sets '_current_node' to the obtained end node.
+            - Returns '_current_node'.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            grandchild2 = Node("Grandchild2")
+            child2.add_subnodes(grandchild2)
+            root.add_subnodes(child1, child2)
+            
+            # Set the current node to the end node
+            end_node = root.end()  # Returns 'grandchild2'
+        """
+        self._current_node = self.get_end_node(from_root)
         return self._current_node
 
     def prev(self):
@@ -610,10 +754,10 @@ class Node:
 
     def get_node_by_index(self, index):
         """
-        Retrieves a node based on a given index path from the current node.
+        Retrieve a node based on a given index path from the current node.
 
         Parameters:
-            index (list): A list of integers representing the index path from the current node to the target node.
+            index (list or int): A list of integers or a single integer representing the index path from the current node to the target node.
 
         Returns:
             Node: The node at the specified index path.
@@ -621,10 +765,20 @@ class Node:
         Raises:
             IndexError: If the index is out of bounds.
 
-        Logic Explained:
+        Behavior:
             - Starts at the current node.
-            - Iteratively navigates to the subnode at each index in the list.
+            - Iteratively navigates to the subnode at each index in the list or the single integer.
             - Returns the final node reached.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+            # Get a node by index
+            target_node = root.get_node_by_index([1])  # Returns 'child2'
+            target_node = root.get_node_by_index(1)  # Also returns 'child2'
         """
         node = self
         for i in [index] if isinstance(index, int) else index:
@@ -633,46 +787,83 @@ class Node:
 
     def get_root_node(self):
         """
-        Retrieves the root node of the tree to which the current node belongs.
+        Retrieve the ultimate root node of the tree to which the current node belongs.
 
         Returns:
             Node: The ultimate root node of the tree.
 
-        Logic Explained:
-            - Calls 'get_root_and_target' method with 'from_root=True' to get the root node.
+        Behavior:
+            - Calls the 'get_root_and_target' method with 'from_root=True' to determine the ultimate root node.
+            - The second element of the tuple returned by 'get_root_and_target' is ignored.
             - Returns the obtained root node.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            root.add_subnodes(child1)
+            # Get the root node
+            root_node = child1.get_root_node()  # Returns 'root'
         """
         root, _ = self.get_root_and_target(True)
         return root
 
-    def get_last_node(self):
+    def get_last_node(self, from_root=False):
         """
-        Retrieves the last subnode of the current node, if any.
+        Retrieve the last subnode of the current node, if any.
+
+        Parameters:
+            from_root (bool): If True, considers the ultimate root as the starting point; otherwise, starts from the current node. Default is False.
 
         Returns:
             Node or None: The last subnode of the current node, or None if the current node has no subnodes.
 
-        Logic Explained:
+        Behavior:
             - Checks the 'subnodes' list of the current node.
             - Returns the last element if the list is not empty; otherwise, returns None.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node('Root')
+            child1 = Node('Child1')
+            child2 = Node('Child2')
+            child3 = Node('Child3')
+            grandchild1 = Node('Grandchild1')
+            child2.add_subnodes(grandchild1)
+            root.add_subnodes(child1, child2, child3)
+            # Get the last subnode
+            last_node = root.get_last_node()  # Returns 'child3' as the last subnode
+            # Note: This is equivalent to root.subnodes[-1]
         """
-        return self.subnodes[-1] if self.subnodes else None
+        subnodes = self.get_root_node().subnodes if from_root else self.subnodes
+        return subnodes[-1] if subnodes else None
 
     def get_end_node(self, from_root=False):
         """
-        Retrieves the deepest last node in the subtree rooted at the current node.
+        Retrieve the deepest last node in the subtree rooted at the current node.
 
         Parameters:
-            from_root (bool): If True, considers the ultimate root as the starting point;
-                              otherwise, starts from the current node. Default is False.
+            from_root (bool): If True, considers the ultimate root as the starting point; otherwise, starts from the current node. Default is False.
 
         Returns:
             Node: The deepest last node in the subtree.
 
-        Logic Explained:
+        Behavior:
             - Calls 'get_root_and_target' to get the root node based on 'from_root'.
             - Iteratively traverses to the last node at each level to find the end node.
             - Returns the obtained end node.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node('Root')
+            child1 = Node('Child1')
+            child2 = Node('Child2')
+            grandchild1 = Node('Grandchild1')
+            grandchild2 = Node('Grandchild2')
+            child2.add_subnodes(grandchild1, grandchild2)
+            root.add_subnodes(child1, child2)
+            # Get the end node
+            end_node = root.get_end_node()  # Returns 'grandchild2' as the deepest last node
         """
         node, _ = self.get_root_and_target(from_root)
         end = node
@@ -686,26 +877,34 @@ class Node:
 
     def get_root_and_target(self, from_root=True):
         """
-        Retrieves the root and target nodes based on the current node and an optional flag.
+        Retrieve the root and target nodes based on the current node and an optional flag.
 
         Parameters:
-            from_root (bool): Flag to determine the root node. When True, finds the ultimate root
-                              of the tree; otherwise, treats the current node as the root. Default is True.
+            from_root (bool): Determines the root node. If True, finds the ultimate root of the tree; otherwise, treats the current node as the root. Default is True.
 
         Returns:
             tuple: (root, target)
-                - root: The ultimate root of the tree or the current node, depending on 'from_root'.
+                - root: The ultimate root or the current node, depending on 'from_root'.
                 - target: The node currently pointed to by the 'root'.
 
-        Logic Explained:
-            - First, if a parent exists, traverse upwards to find the ultimate root of the tree.
-            1. When 'from_root' is True and a parent exists:
-                - 'root' becomes the ultimate root of the tree.
-                - 'target' is set to the current node of this ultimate root.
-            2. Otherwise:
-                - 'root' is set to the current node.
-                - 'target' is determined by the current node of the ultimate root if a parent exists;
-                  otherwise, it is set to the current node of the 'root'.
+        Behavior:
+            - If a parent node exists, the method traverses upwards to find the ultimate root of the tree.
+            - The 'root' and 'target' are determined as follows:
+                1. When 'from_root' is True and a parent exists:
+                    - 'root' is set to the ultimate root of the tree.
+                    - 'target' is set to the current node of this ultimate root.
+                2. When 'from_root' is False:
+                    - 'root' is set to the current node.
+                    - If a parent exists, 'target' is set to the current node of the ultimate root.
+                    - If no parent exists, 'target' is set to the current node of the 'root'.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            root.add_subnodes(child1)
+            # Get the root and target nodes
+            root, target = child1.get_root_and_target()  # Returns ('root', 'child1')
         """
         if self._parent:
             parent = self._parent
@@ -727,33 +926,72 @@ class Node:
         return root, target
 
     def get_current_node(self):
+        """
+        Retrieve the current node in the tree traversal.
+
+        Returns:
+            Node or None: The current node in the depth-first traversal, or None if no node has been traversed yet.
+
+        Behavior:
+            - Returns the value of the '_current_node' attribute.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+            root.next().next()
+            # Get the current node
+            current_node = root.get_current_node()  # Returns Child2
+        """
         return self._current_node
 
     def get_parent(self):
+        """
+        Retrieve the parent node of the current node.
+
+        Returns:
+            Node or None: The parent node of the current node, or None if the current node is the root.
+
+        Behavior:
+            - Accesses the '_parent' attribute of the current node.
+            - Returns the value of the '_parent' attribute.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            root.add_subnodes(child1)
+            # Get the parent node
+            parent_node = child1.get_parent()  # Returns 'root'
+        """
         return self._parent
 
     def get_current_node_index(self, from_root=True):
         """
-        Retrieves the index path of the current node based on the 'from_root' parameter.
+        Retrieve the index path of the current node based on the 'from_root' parameter.
 
         Parameters:
-            from_root (bool): If True, considers the ultimate root of the tree as the starting point;
-                              otherwise, starts from the current node itself. Default is True.
+            from_root (bool): If True, considers the ultimate root of the tree as the starting point; otherwise, starts from the current node itself. Default is True.
 
         Returns:
-            list: A list of integers representing the index path to the current node,
-                  either from the ultimate root or the current node based on 'from_root'.
+            list: A list of integers representing the index path to the current node, either from the ultimate root or the current node based on 'from_root'.
 
-        Logic Explained:
-            1. Fetch the root and target nodes using the 'get_root_and_target' method.
-            2. Initialize an empty list called 'path'.
-            3. Traverse the tree from the root node to find the target node.
-            4. During traversal, update 'path' to capture the index-based route to the target node.
-            5. Return the 'path'.
+        Behavior:
+            - Fetches the root and target nodes using the 'get_root_and_target' method.
+            - Initializes an empty list called 'path'.
+            - Traverses the tree from the root node to find the target node.
+            - Updates 'path' during traversal to capture the index-based route to the target node.
 
-        Note:
-            - The 'path' is a list where each element is the index of the node at each level of the tree.
-              For example, [0, 1] means the target node is the second child of the first child of the root.
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+            # Get the index path of the current node
+            index_path = root.get_current_node_index()  # Returns [] if 'current_node' is None or the root
         """
         root, target = self.get_root_and_target(from_root)
 
@@ -776,14 +1014,28 @@ class Node:
 
     def pretty_print(self, indent=0):
         """
-        Recursively prints the tree rooted at the current node in a pretty format.
+        Recursively print the tree rooted at the current node in a formatted manner.
 
         Parameters:
             indent (int): The current indentation level for the printout. Default is 0.
 
         Behavior:
-            1. Prints the current node's string representation, indented by the specified amount.
-            2. Recursively prints all subnodes, increasing the indentation level by 1 for each level.
+            - Prints the string representation of the current node, indented by the specified amount.
+            - Recursively traverses and prints all subnodes, incrementing the indentation level by 1 for each level.
+
+        Examples:
+            # Initialize a tree with root and two child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+
+            # Pretty print the tree
+            root.pretty_print()  
+            # Output:
+            # Root
+            #   Child1
+            #   Child2
         """
         print('  ' * indent + str(self))
         for subnode in self.subnodes:
@@ -804,7 +1056,7 @@ class Node:
             1. If a title is set for the node, returns the title.
             2. If no title is set, returns a string in the format "Node-{internal ID} (ID: {Python object ID})".
         """
-        return self._title if self._title else f"Node-{self._id} (ID: {id(self)})"
+        return str(self._title) if self._title else f"Node-{self._id} (ID: {id(self)})"
 
     def remove(self, index=None):
         """
@@ -924,14 +1176,25 @@ class Node:
 
     def __iter__(self):
         """
-        Returns the iterator object (self).
+        Make the Node instance iterable.
 
         Returns:
-            Node: The current instance.
+            Node: The current instance, making it iterable.
 
         Behavior:
-            1. The Node class itself acts as an iterator.
-            2. Returns the instance to support iteration in a for loop.
+            - The Node class itself serves as an iterator.
+            - Enables the use of the instance in 'for' loops and other iterable contexts.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+
+            # Iterate through the tree using the Node instance
+            for node in root:
+                print(node.title)
         """
         return self
 
@@ -957,14 +1220,31 @@ class Node:
 
     def search(self, query, path=None):
         """
-        Search for nodes whose titles match the given query.
+        Search for nodes whose titles match a given query.
 
         Parameters:
-            - query (str or re.Pattern): The search query, either a string or a regular expression pattern.
-            - path (list, optional): A list of indices representing the path to start the search from.
+            query (str or re.Pattern): The search query, either a string or a regular expression pattern.
+            path (list, optional): A list of indices representing the path to start the search from. Default is None.
 
         Returns:
             list: A list of tuples, each containing a matching node and its path.
+
+        Behavior:
+            - Initializes an empty list 'results' to store matching nodes and their paths.
+            - Defines a nested function 'traverse' to recursively search for nodes with matching titles.
+            - Calls 'traverse' starting from the current node's subnodes.
+            - Appends matching nodes and their paths to 'results'.
+            - Returns 'results'.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node('Root')
+            child1 = Node('Child1')
+            child2 = Node('Child2')
+            root.add_subnodes(child1, child2)
+
+            # Search for nodes with title containing 'Child'
+            result = root.search('Child')  # Returns [(child1, [0]), (child2, [1])]
         """
         results = []
 
@@ -982,13 +1262,33 @@ class Node:
 
     def find_path_by_titles(self, titles):
         """
-        Find nodes whose titles match the given list of field values.
+        Locate nodes by matching their titles to a list of specified field values.
 
         Parameters:
-            - titles (list or str): A list of field values to match against node titles.
+            titles (list or str): Field values to match against node titles. Can be a single string or a list of strings.
 
         Returns:
             list: A list of tuples, each containing a node and its path that matches the field values.
+
+        Behavior:
+            - Converts 'titles' to a list if it's a single string.
+            - Initializes an empty list 'results' to store matching nodes and their paths.
+            - Defines a recursive function 'traverse' to search for nodes with matching titles.
+            - Calls 'traverse' starting from the current node's subnodes, passing the list of remaining titles to match.
+            - Appends matching nodes and their paths to 'results'.
+            - Returns 'results'.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            grandchild1 = Node("Grandchild1")
+            child2.add_subnodes(grandchild1)
+            root.add_subnodes(child1, child2)
+
+            # Find path by titles
+            result = root.find_path_by_titles(["Child2", "Grandchild1"])  # Returns [(grandchild1, [1, 0])]
         """
         if not isinstance(titles, list):
             titles = [titles]
@@ -1040,10 +1340,35 @@ class Node:
                 self.add_subnode(other)
         return self
 
-    def __igt__(self, other):
-        return self.__gt__(other)
-
     def __gt__(self, other):
+        """
+        Add a new subnode or multiple subnodes to the current node using the '>' operator.
+
+        Parameters:
+            other (Node or list[Node] or tuple[Node]): The node(s) to add as subnodes.
+
+        Returns:
+            Node: The last added subnode.
+
+        Behavior:
+            - Checks the type of 'other' to determine if it's a single node or a list/tuple of nodes.
+            - Calls 'add_subnode' if 'other' is a single node.
+            - Calls 'add_subnodes' if 'other' is a list or tuple of nodes.
+            - Returns the last added subnode.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+
+            # Add a single subnode using the '>' operator
+            root > child1  # Returns 'child1'. Root has one child now.
+
+            # Add multiple subnodes using the '>' operator
+            child2 = Node("Child2")
+            child3 = Node("Child3")
+            last_added_node = root > [child2, child3]  # Returns 'child3'
+        """
         if isinstance(other, list) or isinstance(other, tuple):
             self.add_subnodes(*other)
         else:

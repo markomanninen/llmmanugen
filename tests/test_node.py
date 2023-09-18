@@ -449,6 +449,16 @@ class TestNode(unittest.TestCase):
         # Invoking from a child without subnodes should return None
         self.assertEqual(self.child2.get_last_node(), None)
 
+        # Invoking from a child without subnodes but using from_root=True, should return last subnode from the root
+        self.assertEqual(self.child2.get_last_node(True), self.child2)
+
+        child3 = Node("Child3", {"title": "Grandchild3"})
+        self.root.add_subnodes(child3)
+
+        # After modifying the tail of the root:
+        # Invoking from a child without subnodes but using from_root=True, should return last subnode's children from the root
+        self.assertEqual(self.child2.get_last_node(True), child3)
+
     def test_get_end_node(self):
         """
         Test to verify the behavior of the get_end_node method.
@@ -460,7 +470,14 @@ class TestNode(unittest.TestCase):
         self.assertEqual(self.child1.get_end_node(), self.grandchild2)
 
         # Invoking from the root with parameter False should return the last node of the root
-        self.assertEqual(self.child1.get_end_node(from_root=True), self.child2)
+        self.assertEqual(self.child1.get_end_node(True), self.child2)
+
+        child3 = Node("Child3", {"title": "Grandchild3"})
+        self.root.add_subnodes(child3)
+
+        # After modifying the tail of the root:
+        # Invoking from a child without subnodes but using from_root=True, should return last subnode's children from the root
+        self.assertEqual(self.child2.get_end_node(True), child3.subnodes[0])
 
     def test_pretty_print(self):
         print("Test pretty_print output:")
@@ -787,3 +804,23 @@ class TestNode(unittest.TestCase):
         while self.root.next():
             pass
         self.assertEqual(str(self.root.peek_prev()), "Grandchild2")
+    
+    def test_end_method(self):
+        last_node = self.root.end()
+        self.assertEqual(last_node, self.root.get_current_node())
+        self.assertEqual(str(last_node), "Child2")
+
+        last_node_from_root = self.child1.end(True)
+        self.assertEqual(last_node_from_root, self.child1.get_current_node())
+        self.assertEqual(str(last_node_from_root), "Child2")
+
+        last_node_from_child = self.child1.end()
+        self.assertEqual(last_node_from_child, self.child1.get_current_node())
+        self.assertEqual(str(last_node_from_child), "Grandchild2")
+
+    def test_get_path_method(self):
+        self.assertEqual(self.grandchild2.get_path(), [0, 1])
+
+    def test_node_title_types(self):
+        self.assertEqual(str(Node(1)), "1")
+        self.assertEqual(str(Node(1.1)), "1.1")
