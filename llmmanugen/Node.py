@@ -166,51 +166,52 @@ class Node:
         for node in root:
             print(node.title)
     """
+
     counter = 0
     """
-    int: Class-level variable that keeps track of the number of Node instances created.
+    int: Class-level counter that auto-increments to generate a unique ID for each new Node instance.
     """
 
     fields = {}
     """
-    dict: Extra fields in addition to title, in which any Node data can be stored. This has no pre-defined structure constraints.
+    dict: Class-level property for storing additional attributes of a Node instance. Beyond the title, this property allows for the storage of any Node data without pre-defined structure constraints.
     """
 
     subnodes = []
     """
-    list: Subnodes list. Instances must be either Node, or extended Node classes.
+    list: Class-level property that stores or holds the list of subnodes, each of which must be a Node instance, attached to a Node instance.
     """
 
     reached_tree_end = False
     """
-    bool: Nested node tree traversal indicator for the end of the tree.
+    bool: Class-level property that indicates whether the end of the tree has been reached during traversal.
     """
 
     reached_tree_start = True
     """
-    bool: Nested node tree traversal indicator for the beginning of the tree.
+     bool: Class-level property that indicates whether the start of the tree has been reached during traversal.
     """
 
     def __init__(self, *args, **kwargs):
         """
-        Initialize a new Node instance with various attributes and optional subnodes.
+        Initialize a Node instance with attributes and optional subnodes.
 
-        Parameters:
-            - *args: Accepts zero or more arguments. The last string argument is set as the node's title. 
-                    Other arguments must be Node instances or dictionaries to be added as subnodes.
-            - **kwargs: Keyword arguments for additional configurations.
-                - subnodes (list[Node], optional): A list of Node instances to extend the existing subnodes.
-                - Any other keyword arguments are stored in the 'fields' dictionary.
+        Args:
+            *args: Zero or more arguments. The last string argument sets the node's title. 
+                Other arguments should be Node instances or dictionaries for subnodes.
+            **kwargs: Additional configurations.
+                - subnodes (list[Node], optional): Extend existing subnodes.
+                - Other keyword arguments populate the 'fields' dictionary.
 
         Side Effects:
-            - Increments the class-level 'counter' attribute to generate a unique ID for the node.
+            - Generates a unique ID for the node by incrementing the class-level 'counter'.
             - Initializes '_title', '_id', and '_parent' attributes.
             - Populates 'subnodes' list and sets their parent to this node.
             - Fills 'fields' dictionary with additional keyword arguments, excluding 'title' and 'subnodes'.
             - Calls 'reset' method to initialize state flags.
 
         Raises:
-            - TypeError: If any argument in *args is neither a string, Node instance, nor dictionary.
+            - TypeError: If any argument in *args is not a string, Node instance, or dictionary.
         """
         Node.counter += 1
         title = kwargs.get("title", None)
@@ -310,10 +311,10 @@ class Node:
     @property
     def title(self):
         """
-        Get the title of the node.
+        Retrieve the title of the node.
 
         Returns:
-            str: The title of the node.
+            str: The node's title.
         """
         return self._title
 
@@ -336,23 +337,28 @@ class Node:
     @property
     def parent(self):
         """
-        Gets the parent node of the current node.
+        Retrieve the parent node of the current node.
 
         Returns:
-            Node or None: The parent node of the current node, or None if the node is the root.
+            Node or None: The parent node, or None if the node is the root.
 
         Behavior:
-            1. Returns the value stored in the private attribute _parent, which is set either during initialization or when added as a subnode to another node.
+            - Retrieves the value from the private attribute '_parent'.
+            - The '_parent' attribute is set during initialization or when the node is added as a subnode to another node.
         """
         return self._parent
 
     @property
     def current_node(self):
         """
-        Gets the current node.
+        Retrieve the current node in the tree traversal.
 
         Returns:
             Node: The current node.
+
+        Behavior:
+            - Retrieves the value from the private attribute '_current_node'.
+            - The '_current_node' attribute is set during tree traversal methods like 'next' and 'prev'.
         """
         return self._current_node
 
@@ -398,9 +404,44 @@ class Node:
         return self._modify_subnodes([index_list] if isinstance(index_list, int) else index_list, 'set', node, **kwargs)
 
     def insert_subnode(self, index_list, node=None, **kwargs):
+        """
+        Insert a subnode at a specified index, shifting subsequent subnodes, and return the modified node.
+
+        Parameters:
+            index_list (int or list[int]): The index or list of indices specifying where to insert the new subnode.
+            node (Node, optional): An existing Node instance to insert. If None, a new node will be created based on the **kwargs.
+            **kwargs: Optional parameters in dictionary format for creating a new node. Can include 'title', 'subnodes', and any extra fields.
+
+        Returns:
+            Node: The modified node, allowing for method chaining.
+
+        Behavior:
+            - Calls the private '_modify_subnodes' method with the following arguments:
+                1. A list containing the index or indices for the new subnode.
+                2. The operation type ('insert' in this case).
+                3. The Node instance to insert, either provided or created from **kwargs.
+            - Existing subnodes at and after the specified index are shifted to make room for the new subnode.
+        """
         return self._modify_subnodes([index_list] if isinstance(index_list, int) else index_list, 'insert', node, **kwargs)
 
     def add_subnode(self, node=None, **kwargs):
+        """
+        Add a subnode to the current node and return the modified node.
+
+        Parameters:
+            node (Node, optional): An existing Node instance to add as a subnode. If None, a new node will be created based on the **kwargs.
+            **kwargs: Optional parameters in dictionary format for creating a new node. Can include 'title', 'subnodes', and any extra fields. 'Subnodes', if provided, undergo type-checking and conversion to Node instances as needed.
+
+        Returns:
+            Node: The modified node, allowing for method chaining.
+
+        Behavior:
+            - Utilizes the private '_modify_subnodes' method to handle subnode management.
+            - '_modify_subnodes' is called with:
+                1. A list specifying the index for the new subnode.
+                2. The operation type, which is 'add' in this case.
+                3. The Node instance to add, either provided or created from **kwargs.
+        """
         return self._modify_subnodes([len(self.subnodes)], 'add', node, **kwargs)
 
     def next(self):
@@ -701,24 +742,22 @@ class Node:
 
     def remove(self, index=None):
         """
-        Removes a node based on its index path or all subnodes of the current node.
+        Remove a node based on its index path or clear all subnodes of the current node.
 
         Parameters:
-            index (list|int, optional): An integer or a list of integers representing the index path to the node to be removed.
-                                        If not provided or empty list is given, all subnodes of the current node will be removed.
+            index (list|int, optional): An integer or list of integers specifying the index path to the node to remove. If omitted or an empty list is provided, all subnodes are cleared.
 
         Raises:
             IndexError: If the index path is out of bounds.
 
-        Logic Explained:
-            - If 'index' is provided, navigates to the specified node and removes it along with its subnodes.
-            - If 'index' is not provided, removes all subnodes of the current node.
+        Behavior:
+            - If 'index' is provided, navigates to the specified node and removes it, along with its subnodes.
+            - If 'index' is omitted or an empty list is given, clears all subnodes of the current node.
 
         Examples:
             1. To remove a specific subnode:
-                node.remove([0, 1])  # Removes the second child of the first child of 'node'
-
-            2. To remove all subnodes of the current node:
+                node.remove([0, 1])  # Removes the second child of the first child of 'node'.
+            2. To clear all subnodes:
                 node.remove()
         """
         if index:
@@ -733,25 +772,21 @@ class Node:
 
     def add_subnodes(self, *nodes):
         """
-        Adds multiple subnodes to the current node's list of subnodes and sets their parent.
+        Add multiple subnodes to the current node and return the modified node.
 
         Parameters:
-            *nodes (Node): Variable number of nodes to add as subnodes.
+            *nodes (Node): A variable number of Node instances to add as subnodes.
 
-        Logic Explained:
-            - Iterates through each node in the variable argument list.
-            - Calls the 'add_subnode' method for each node to add it as a subnode and set its parent.
+        Returns:
+            Node: The modified node, allowing for method chaining.
 
-        Usage Examples:
-            # Create root node
+        Behavior:
+            - Iterates through the variable argument list of nodes.
+            - Invokes the 'add_subnode' method for each node, adding it as a subnode and setting its parent.
+
+        Example:
             root = Node("Root")
-
-            # Create multiple child nodes
-            child1 = Node("Child1")
-            child2 = Node("Child2")
-            child3 = Node("Child3")
-
-            # Add multiple child nodes to root
+            child1, child2, child3 = Node("Child1"), Node("Child2"), Node("Child3")
             root.add_subnodes(child1, child2, child3)
         """
         for node in nodes:
@@ -760,22 +795,39 @@ class Node:
         return self
 
     def insert_subnodes(self, index, *nodes):
+        """
+        Insert multiple subnodes at a specified index, shifting subsequent subnodes, and return the modified node.
+
+        Parameters:
+            index (int): The index specifying where to insert the new subnodes.
+            *nodes (Node): A variable number of Node instances to insert as subnodes.
+
+        Returns:
+            Node: The modified node, allowing for method chaining.
+
+        Behavior:
+            - Iterates through the variable argument list of nodes.
+            - Invokes the 'insert_subnode' method for each node, inserting it at the specified index and shifting subsequent subnodes.
+        """
         for node in nodes:
             self.insert_subnode(index, node)
 
     def remove_subnodes(self, index=None):
         """
-        Removes multiple subnodes from the current node's list of subnodes based on their indices.
+        Remove multiple subnodes based on their indices and return the modified node.
 
         Parameters:
-            index (list|int): List of indices or an integer to remove. They represent the index route to the target node.
+            index (list|int, optional): List of indices or an integer specifying the subnodes to remove. Represents the index route to the target node(s).
 
-        Logic Explained:
-            - Sorts the index in reverse order to avoid index shifts during removal.
+        Returns:
+            Node: The modified node, allowing for method chaining.
+
+        Behavior:
+            - Sorts the indices in reverse order to avoid index shifts during removal.
             - Iterates through each index in the sorted list.
             - Calls the 'remove' method for each index to remove the corresponding subnode.
 
-        Usage Examples:
+        Examples:
             # Create root node and child nodes
             root = Node("Root")
             child1 = Node("Child1")
@@ -786,7 +838,7 @@ class Node:
             root.remove_subnodes([0, 1])
 
         Note:
-            - Indices are removed in reverse order to avoid messing up the indices of the nodes that are yet to be removed.
+            - Indices are removed in reverse order to avoid altering the indices of the nodes yet to be removed.
         """
         index = self._remove_index if index is None else index
         if isinstance(index, int):
