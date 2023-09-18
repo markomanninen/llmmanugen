@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='llmmanugen',
-    version='0.1.7',
+    version='0.1.8',
     packages=find_packages(),
     author='Marko T. Manninen',
     author_email='elonmedia@gmail.com',

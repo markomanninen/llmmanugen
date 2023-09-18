@@ -307,6 +307,12 @@ class Node:
         """
         self._title = title
 
+    def get_title(self):
+        return self._title
+    
+    def get_fields(self):
+        return self.fields
+
     @property
     def parent(self):
         """
@@ -732,9 +738,6 @@ class Node:
             self.add_subnode(node)
 
         return self
-    
-    def set_subnodes(self, index, *nodes):
-        raise ValueError("There is no meaningful way to set subnodes in multitude. Use single set_subnode() method.")
 
     def insert_subnodes(self, index, *nodes):
         for node in nodes:
