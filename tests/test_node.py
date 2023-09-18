@@ -824,3 +824,27 @@ class TestNode(unittest.TestCase):
     def test_node_title_types(self):
         self.assertEqual(str(Node(1)), "1")
         self.assertEqual(str(Node(1.1)), "1.1")
+
+    def test_delete_attribute_method(self):
+        node = Node(**{"foo": "bar"})
+        self.assertEqual(node["foo"], "bar")
+        del node["foo"]
+        self.assertEqual(hasattr(node, "foo"), False)
+
+    def test_delete_item_method(self):
+        node = Node(**{"foo": "bar"})
+        self.assertEqual(node["foo"], "bar")
+        del node.foo
+        self.assertEqual(hasattr(node, "foo"), False)
+
+    def test_get_subnodes_as_list_items(self):
+        node_b = Node("a", Node("b"))[0]
+        self.assertEqual(node_b.title, "b")
+        node_a = node_b.parent
+        node_a.add_subnodes(Node("c"), Node("d"), Node("e"))
+        self.assertEqual(len(node_a.subnodes), 4)
+        node_1_3 = node_a[1:3]
+        self.assertEqual(node_1_3[0].title, "c")
+        self.assertEqual(node_1_3[1].title, "d")
+        node_1_3[0] = Node("C")
+        self.assertEqual(node_1_3[0].title, "C")

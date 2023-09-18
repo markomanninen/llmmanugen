@@ -1042,6 +1042,26 @@ class Node:
             subnode.pretty_print(indent + 1)
 
     def __repr__(self):
+        """
+        Generate a string representation of the Node instance.
+
+        Returns:
+            str: A string that represents the Node instance, including its title, number of subnodes, and fields.
+
+        Behavior:
+            - Calls `str(self)` to get the string representation of the Node's title.
+            - Counts the number of subnodes using `len(self.subnodes)`.
+            - Includes the fields dictionary in the representation.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root", extra_field="extra_value")
+            child1 = Node("Child1")
+            root.add_subnodes(child1)
+            
+            # Generate string representation
+            repr_string = repr(root)  # Returns "llmmanugen.Node(Root subnodes=1 fields={'extra_field': 'extra_value'})"
+        """
         return f"llmmanugen.Node({str(self)} subnodes={len(self.subnodes)} fields={self.fields})"
 
     def __str__(self):
@@ -1209,9 +1229,30 @@ class Node:
             StopIteration: If the traversal reaches the end of the tree.
 
         Behavior:
-            1. Calls the 'next' method to get the next node.
-            2. If the next node is None (end of the tree), raise StopIteration.
-            3. Otherwise, returns the next node.
+            - Calls the 'next' method to get the next node.
+            - If the next node is None (end of the tree), raise StopIteration.
+            - Otherwise, returns the next node.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node('Root')
+            child1 = Node('Child1')
+            child2 = Node('Child2')
+            root.add_subnodes(child1, child2)
+
+            # Create an iterator object
+            node_iterator = iter(root)
+
+            # Use __next__ to traverse the tree
+            first_node = next(node_iterator)  # Returns 'Root'
+            second_node = next(node_iterator)  # Returns 'Child1'
+            third_node = next(node_iterator)  # Returns 'Child2'
+
+            # Raises StopIteration when there are no more nodes to traverse
+            try:
+                fourth_node = next(node_iterator)
+            except StopIteration:
+                print('End of tree reached.')
         """
         node = self.next()
         if node is None:
@@ -1376,6 +1417,32 @@ class Node:
         return self.subnodes[-1]
 
     def __getattr__(self, key):
+        """
+        Retrieve the value of an attribute or field by key.
+
+        Parameters:
+            key (str): The name of the attribute or field to retrieve.
+
+        Returns:
+            Any: The value of the attribute or field.
+
+        Raises:
+            AttributeError: If the key is not found in either the Node's attributes or fields.
+
+        Behavior:
+            - Checks if the key exists in the Node's attributes using `key in self.__dict__`.
+            - If it exists, returns the value using `self.__getitem__(key)`.
+            - Checks if the key exists in the `fields` dictionary.
+            - If it exists, returns the value from `fields`.
+            - If the key is not found in either, raises an AttributeError.
+
+        Examples:
+            # Initialize a Node with fields
+            node = Node("Node1", extra_field="extra_value")
+
+            # Retrieve value by key
+            value = node.extra_field  # Returns 'extra_value'
+        """
         if key in self.__dict__:
             return self.__getitem__(key)
         elif key in self.fields:
@@ -1384,7 +1451,38 @@ class Node:
              raise AttributeError(f"Attribute '{key}' not found from the Node attributes or fields")
 
     def __getitem__(self, key):
-        if hasattr(self, key):
+        """
+        Access an attribute, field, or subnode by key or index.
+
+        Parameters:
+            key (Union[str, int, slice]): The name or index of the attribute, field, or subnode to access.
+
+        Returns:
+            Any: The value of the attribute, field, or subnode.
+
+        Raises:
+            KeyError: If the key is not an attribute, field, or index of a subnode.
+
+        Behavior:
+            - If the key is an integer or slice, returns the corresponding subnode(s).
+            - Uses `hasattr(self, key)` to check for an attribute with the given key.
+            - Returns the attribute value using `getattr(self, key)` if it exists.
+            - Checks for the key in the `fields` dictionary if the attribute doesn't exist.
+            - Raises a KeyError if the key is not found in attributes, fields, or subnodes.
+
+        Examples:
+            # Initialize a Node with fields and subnodes
+            node = Node('Node1', extra_field='extra_value')
+            node.subnodes = [Node('Child1'), Node('Child2')]
+
+            # Access value by key
+            value = node['extra_field']  # Returns 'extra_value'
+            value = node[0]  # Returns the first subnode
+            value = node['title']  # Raises KeyError
+        """
+        if isinstance(key, int) or isinstance(key, slice):
+            return self.subnodes[key]
+        elif hasattr(self, key):
             return getattr(self, key)
         elif key in self.fields:
             return self.fields[key]
@@ -1393,11 +1491,24 @@ class Node:
 
     def __setitem__(self, key, value):
         """
-        Sets an attribute by key name and updates the timestamp if the attribute exists.
+        Set the value of an attribute or field by key.
 
         Parameters:
-            key (str): The name of the attribute to set.
-            value: The value to set the attribute to.
+            key (str): The name of the attribute or field to set.
+            value (Any): The value to set for the attribute or field.
+
+        Behavior:
+            - Checks if the Node has an attribute with the given key using `hasattr(self, key)`.
+            - If the attribute exists, sets its value using `setattr(self, key, value)`.
+            - Checks if the key exists in the `fields` dictionary.
+            - If the key exists in `fields`, updates its value.
+
+        Examples:
+            # Initialize a Node with fields
+            node = Node('Node1', extra_field='extra_value')
+
+            # Set value by key
+            node['extra_field'] = 'new_value'  # Updates 'extra_field' in both attribute and fields dictionary
         """
         if hasattr(self, key):
             setattr(self, key, value)
@@ -1405,6 +1516,76 @@ class Node:
             self.fields[key] = value
 
     def __setattr__(self, key, value):
+        """
+        Set the value of an attribute or field by key.
+
+        Parameters:
+            key (str): The name of the attribute or field to set.
+            value (Any): The value to set for the attribute or field.
+
+        Behavior:
+            - Calls the superclass' `__setattr__` method to set the attribute.
+            - Checks if the key exists in the `fields` dictionary.
+            - If the key exists in `fields`, updates its value.
+
+        Examples:
+            # Initialize a Node with fields
+            node = Node('Node1', extra_field='extra_value')
+
+            # Set value by key
+            node.extra_field = 'new_value'  # Updates 'extra_field' in both attribute and fields dictionary
+        """
         super().__setattr__(key, value)
         if "fields" in self.__dict__ and key in self.__dict__["fields"]:
             self.fields[key] = value
+
+    def __delattr__(self, key):
+        """
+        Delete an attribute or field by key.
+
+        Parameters:
+            key (str): The name of the attribute or field to delete.
+
+        Behavior:
+            - Calls the superclass' `__delattr__` method to delete the attribute.
+            - Checks if the key exists in the `fields` dictionary.
+            - If the key exists in `fields`, deletes it from the dictionary.
+
+        Examples:
+            # Initialize a Node with fields
+            node = Node('Node1', extra_field='extra_value')
+
+            # Delete value by key
+            del node.extra_field  # Deletes 'extra_field' from both attribute and fields dictionary
+        """
+        try:
+            super().__delattr__(key)
+        except:
+            pass
+        if "fields" in self.__dict__ and key in self.__dict__["fields"]:
+            del self.fields[key]
+
+    def __delitem__(self, key):
+        """
+        Delete an attribute or field by key using dictionary-like syntax.
+
+        Parameters:
+            key (str): The name of the attribute or field to delete.
+
+        Behavior:
+            - Checks if the object has an attribute with the name specified by `key`.
+            - If such an attribute exists, deletes it using `delattr`.
+            - Checks if the key exists in the `fields` dictionary.
+            - If the key exists in `fields`, deletes it from the dictionary.
+
+        Examples:
+            # Initialize a Node with fields
+            node = Node('Node1', extra_field='extra_value')
+
+            # Delete value by key using dictionary-like syntax
+            del node['extra_field']  # Deletes 'extra_field' from both attribute and fields dictionary
+        """
+        if hasattr(self, key):
+            delattr(self, key)
+        if key in self.fields:
+            del self.fields[key]
