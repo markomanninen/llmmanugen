@@ -196,13 +196,12 @@ class Node:
         Initialize a Node instance with attributes and optional subnodes.
 
         Parameters:
-            *args: Zero or more arguments. The last string argument sets the node's title. 
-                Other arguments should be Node instances or dictionaries for subnodes.
+            *args: Zero or more arguments. The last string argument sets the node's title. Other arguments should be Node instances or dictionaries for subnodes.
             **kwargs: Additional configurations.
                 - subnodes (list[Node], optional): Extend existing subnodes.
                 - Other keyword arguments populate the 'fields' dictionary.
 
-        Side Effects:
+        Behavior:
             - Generates a unique ID for the node by incrementing the class-level 'counter'.
             - Initializes '_title', '_id', and '_parent' attributes.
             - Populates 'subnodes' list and sets their parent to this node.
@@ -629,9 +628,9 @@ class Node:
         Behavior:
             - Utilizes the private '_modify_subnodes' method to handle subnode management.
             - '_modify_subnodes' is called with:
-                1. A list specifying the index for the new subnode.
-                2. The operation type, which is 'add' in this case.
-                3. The Node instance to add, either provided or created from **kwargs.
+              1. A list specifying the index for the new subnode.
+              2. The operation type, which is 'add' in this case.
+              3. The Node instance to add, either provided or created from **kwargs.
         """
         return self._modify_subnodes([len(self.subnodes)], 'add', node, **kwargs)
 
@@ -953,13 +952,13 @@ class Node:
         Behavior:
             - If a parent node exists, the method traverses upwards to find the ultimate root of the tree.
             - The 'root' and 'target' are determined as follows:
-                1. When 'from_root' is True and a parent exists:
-                    - 'root' is set to the ultimate root of the tree.
-                    - 'target' is set to the current node of this ultimate root.
-                2. When 'from_root' is False:
-                    - 'root' is set to the current node.
-                    - If a parent exists, 'target' is set to the current node of the ultimate root.
-                    - If no parent exists, 'target' is set to the current node of the 'root'.
+              1. When 'from_root' is True and a parent exists:
+                - 'root' is set to the ultimate root of the tree.
+                - 'target' is set to the current node of this ultimate root.
+              2. When 'from_root' is False:
+                - 'root' is set to the current node.
+                - If a parent exists, 'target' is set to the current node of the ultimate root.
+                - If no parent exists, 'target' is set to the current node of the 'root'.
 
         Examples:
             # Initialize a tree with root and child nodes
@@ -1159,13 +1158,13 @@ class Node:
 
         Examples:
             1. To remove the first subnode:
-                node.remove(1)
+              'node.remove(1)'
             2. To remove a specific subnodes:
-                node.remove([0, 1])  # Removes the first and the second subnodes.
+              'node.remove([0, 1])'  # Removes the first and the second subnodes.
             3. To remove subnode from path:
-                node.remove([[0, 1]])  # Removes the second child of the first child of 'node'.
+              'node.remove([[0, 1]])'  # Removes the second child of the first child of 'node'.
             4. To clear all subnodes:
-                node.remove()
+              'node.remove()'
         """
         if index is not None:
             if isinstance(index, int):
