@@ -165,12 +165,32 @@ class Node:
         # Iterating through the tree
         for node in root:
             print(node.title)
-
     """
     counter = 0
     """
     int: Class-level variable that keeps track of the number of Node instances created.
     """
+
+    fields = {}
+    """
+    dict: Extra fields in addition to title, in which any Node data can be stored. This has no pre-defined structure constraints.
+    """
+
+    subnodes = []
+    """
+    list: Subnodes list. Instances must be either Node, or extended Node classes.
+    """
+
+    reached_tree_end = False
+    """
+    bool: Nested node tree traversal indicator for the end of the tree.
+    """
+
+    reached_tree_start = True
+    """
+    bool: Nested node tree traversal indicator for the beginning of the tree.
+    """
+
     def __init__(self, *args, **kwargs):
         """
         Initialize a new Node instance with various attributes and optional subnodes.
@@ -218,6 +238,22 @@ class Node:
         # Set all other fields to the field storage except subnodes and title
         self.fields = {k: v for k, v in kwargs.items() if k not in ["title", "subnodes"]}
         self.reset()
+    
+    def reset(self):
+        """
+        Resets the current node and boundary flags to their initial states.
+
+        Logic Explained:
+            - Sets '_current_node' to None.
+            - Sets 'reached_tree_end' to False.
+            - Sets 'reached_tree_start' to True.
+        """
+        self._insert_index = None
+        self._remove_index = None
+        self._current_node = None
+        self.reached_tree_end = False
+        self.reached_tree_start = True
+        return self
 
     def has_subnodes(self):
         """
@@ -258,22 +294,6 @@ class Node:
         if node:
             self.next()
         return node
-
-    def reset(self):
-        """
-        Resets the current node and boundary flags to their initial states.
-
-        Logic Explained:
-            - Sets '_current_node' to None.
-            - Sets 'reached_tree_end' to False.
-            - Sets 'reached_tree_start' to True.
-        """
-        self._insert_index = None
-        self._remove_index = None
-        self._current_node = None
-        self.reached_tree_end = False
-        self.reached_tree_start = True
-        return self
 
     def is_at_tree_boundary(self):
         """
