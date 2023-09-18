@@ -9,10 +9,10 @@ class TestSection(unittest.TestCase):
         self.section = Section("Introduction", summary="A brief intro", content="Welcome to the guide.", prompt="Read more", extra_item="foo")
 
     def test_init(self):
-        self.assertEqual(self.section._title, "Introduction")
-        self.assertEqual(self.section._summary, "A brief intro")
-        self.assertEqual(self.section._content, "Welcome to the guide.")
-        self.assertEqual(self.section._prompt, "Read more")
+        self.assertEqual(self.section.title, "Introduction")
+        self.assertEqual(self.section.summary, "A brief intro")
+        self.assertEqual(self.section.content, "Welcome to the guide.")
+        self.assertEqual(self.section.prompt, "Read more")
 
         created_format = datetime.strptime(self.section._created, '%Y-%m-%d %H:%M:%S')
         self.assertIsInstance(created_format, datetime)
@@ -87,7 +87,7 @@ class TestSection(unittest.TestCase):
 
     def test_setitem_method(self):
         self.section['title'] = "Set via item"
-        self.assertEqual(self.section._title, "Set via item")
+        self.assertEqual(self.section.title, "Set via item")
         updated_format = datetime.strptime(self.section._updated, '%Y-%m-%d %H:%M:%S')
         self.assertIsInstance(updated_format, datetime)
 

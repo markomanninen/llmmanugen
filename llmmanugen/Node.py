@@ -924,3 +924,21 @@ class Node:
             return self.fields[key]
         else:
             raise KeyError(f"Key '{key}' not found from the Node attributes or fields")
+
+    def __setitem__(self, key, value):
+        """
+        Sets an attribute by key name and updates the timestamp if the attribute exists.
+
+        Parameters:
+            key (str): The name of the attribute to set.
+            value: The value to set the attribute to.
+        """
+        if hasattr(self, key):
+            setattr(self, key, value)
+        if key in self.fields:
+            self.fields[key] = value
+
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
+        if "fields" in self.__dict__ and key in self.__dict__["fields"]:
+            self.fields[key] = value

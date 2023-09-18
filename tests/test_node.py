@@ -72,11 +72,27 @@ class TestNode(unittest.TestCase):
             print("non_existing_key", node["non_existing_attribute"])
         except KeyError:
             pass
-    
+
+    def test_set_attr(self):
+        node = Node(**{"foo": "bar"})
+        self.assertEqual(node.fields["foo"], "bar")
+        self.assertEqual(node["foo"], "bar")
+        node["foo"] = "baz"
+        self.assertEqual(node.fields["foo"], "baz")
+        self.assertEqual(node["foo"], "baz")
+
+    def test_set_item(self):
+        node = Node(**{"foo": "bar"})
+        self.assertEqual(node.fields["foo"], "bar")
+        self.assertEqual(node.foo, "bar")
+        node.foo = "bazz"
+        self.assertEqual(node.fields["foo"], "bazz")
+        self.assertEqual(node.foo, "bazz")
+
     def test_repr(self):
         node = Node(**{"subnodes": [Node()], "foo": "bar"})
         self.assertTrue("subnodes=1" in node.__repr__())
-    
+
     def test_headless_nodes(self):
         root = Node()
         node1 = Node()
