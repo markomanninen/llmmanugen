@@ -137,8 +137,7 @@ class Node:
         _current_node (Node or None): The node currently pointed to. Default is None.
         subnodes (list): List of child nodes.
 
-    Usage Examples:
-
+    Examples:
         # Initialize root and child nodes
         root = Node("Root")
         child1 = Node("Child1")
@@ -196,7 +195,7 @@ class Node:
         """
         Initialize a Node instance with attributes and optional subnodes.
 
-        Args:
+        Parameters:
             *args: Zero or more arguments. The last string argument sets the node's title. 
                 Other arguments should be Node instances or dictionaries for subnodes.
             **kwargs: Additional configurations.
@@ -423,15 +422,47 @@ class Node:
 
         If node title is None, the __str__ representation will use autoincrement id for the part of the label.
 
-        Args:
+        Parameters:
             title (str, optional): The new title for the node. Defaults to None.
         """
         self._title = title
 
     def get_title(self):
+        """
+        Retrieve the title of the Node.
+
+        Returns:
+            str: The title of the Node.
+
+        Behavior:
+            - Returns the value of the `_title` attribute.
+
+        Examples:
+            # Initialize a Node with a title
+            node = Node('Node1')
+
+            # Retrieve the title
+            title = node.get_title()  # Returns 'Node1'
+    """
         return self._title
     
     def get_fields(self):
+        """
+        Retrieve the fields of the Node.
+
+        Returns:
+            dict: The fields of the Node.
+
+        Behavior:
+            - Returns the value of the `fields` attribute.
+
+        Examples:
+            # Initialize a Node with fields
+            node = Node('Node1', extra_field='extra_value')
+
+            # Retrieve the fields
+            fields = node.get_fields()  # Returns {'extra_field': 'extra_value'}
+    """
         return self.fields
 
     @property
@@ -480,6 +511,41 @@ class Node:
         self._current_node = node
     
     def _modify_subnodes(self, index_list, action, node=None, **kwargs):
+        """
+        Modify the subnodes of the Node based on the specified action and index list.
+
+        Parameters:
+            index_list (list): List of indices to navigate to the target subnode.
+            action (str): The action to perform ('set', 'insert', 'add').
+            node (Union[Node, dict], optional): The Node object or dictionary to use for the modification.
+            **kwargs: Additional keyword arguments to create a Node if 'node' is not provided.
+
+        Returns:
+            Node: The modified Node object.
+
+        Raises:
+            TypeError: If 'node' is neither a Node object nor a dictionary.
+            ValueError: If neither 'node' nor 'kwargs' are provided, or if an invalid action is specified.
+
+        Behavior:
+            - Validates the 'node' and 'kwargs' parameters.
+            - Navigates to the target subnode using 'index_list'.
+            - Performs the specified action ('set', 'insert', 'add') on the target subnode.
+
+        Examples:
+            # Initialize a Node with subnodes
+            node = Node('Node1')
+            node.add_subnodes(Node('Child1'), Node('Child2'))
+
+            # Modify a subnode by setting
+            node._modify_subnodes([0], 'set', Node('NewChild'))
+
+            # Modify a subnode by inserting
+            node._modify_subnodes([1], 'insert', Node('InsertedChild'))
+
+            # Modify a subnode by adding
+            node._modify_subnodes([], 'add', Node('AppendedChild'))
+        """
         # Validate and create the node
         if not isinstance(node, Node) and not isinstance(node, dict):
             raise TypeError("Node must be of type Node object or dictionary")
@@ -1066,8 +1132,7 @@ class Node:
         Returns a string representation of the current node.
 
         Returns:
-            str: The title of the node if set, otherwise a default string containing
-            the node's internal ID and its Python object ID.
+            str: The title of the node if set, otherwise a default string containing the node's internal ID and its Python object ID.
 
         Behavior:
             1. If a title is set for the node, returns the title.
@@ -1136,7 +1201,7 @@ class Node:
             - Iterates through the variable argument list of nodes.
             - Invokes the 'add_subnode' method for each node, adding it as a subnode and setting its parent.
 
-        Example:
+        Examples:
             root = Node("Root")
             child1, child2, child3 = Node("Child1"), Node("Child2"), Node("Child3")
             root.add_subnodes(child1, child2, child3)
