@@ -146,6 +146,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(self.root.subnodes[3].title, "Child3")
 
     def test_add_magic(self):
+        # Return the modified aka. the first node
         node = Node() + Node() + Node()
         self.assertEqual(len(node.subnodes), 2)
         self.assertEqual(len(node.subnodes[0].subnodes), 0)
@@ -156,6 +157,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(len(node.subnodes[0].subnodes), 0)
         self.assertEqual(len(node.subnodes[1].subnodes), 0)
 
+        # Difference presedence, latter two goes to the first node as a nested structure
         node = Node() + (Node() + Node())
 
         self.assertEqual(len(node.subnodes), 1)
@@ -163,7 +165,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(len(node.subnodes[0].subnodes[0].subnodes), 0)
 
         node = Node("a")
-        node += Node("b")
+        node + Node("b")
         node + Node("c")
         self.assertEqual(len(node.subnodes), 2)
 
@@ -173,17 +175,28 @@ class TestNode(unittest.TestCase):
         self.assertEqual(node.parent.title, "middle")
         self.assertEqual(node.parent.parent.title, "first")
 
+        # Append to the last index, return last added node
         node = Node("first")
         node > Node("last")
         self.assertEqual(node.title, "first")
         self.assertEqual(node.subnodes[0].title, "last")
 
+        # Insert to the first index
+        node = Node("first")
+        self.assertEqual(node.title, "first")
+
+        node < Node("sub1")
+        self.assertEqual(node.subnodes[0].title, "sub1")
+
+        node < Node("sub2")
+        self.assertEqual(node.subnodes[0].title, "sub2")
+
     def test_remove_magic(self):
         node = Node("a") + Node("b") + Node("c") + Node("d")
         self.assertEqual(len(node.subnodes), 3)
-        node -= 1
+        node - 1
         self.assertEqual(len(node.subnodes), 2)
-        node -= 0
+        node - 0
         self.assertEqual(len(node.subnodes), 1)
         self.assertTrue("llmmanugen.Node(d " in node.subnodes[0].__repr__())
 
@@ -663,9 +676,17 @@ class TestNode(unittest.TestCase):
             node = node.next()
             self.assertNotEqual(node, self.child2)
 
+    def test_remove_specific_node_by_index(self):
+        # Test removing a specific subnode
+        self.assertEqual(len(self.root.subnodes), 2)
+        self.root.remove(1)
+        self.assertEqual(len(self.root.subnodes), 1)
+        self.root.remove(0)
+        self.assertEqual(len(self.root.subnodes), 0)
+
     def test_remove_specific_node(self):
         # Test removing a specific node
-        self.root.remove([0, 1])  # Should remove grandchild2 under child1
+        self.root.remove([[0, 1]])  # Should remove grandchild2 under child1
         self.assertEqual(len(self.root.subnodes[0].subnodes), 1)  # child1 should now have 1 subnode
         self.assertEqual(self.root.subnodes[0].subnodes[0]._title, "Grandchild1")  # Remaining subnode should be grandchild1
 
@@ -680,9 +701,8 @@ class TestNode(unittest.TestCase):
             self.root.remove([0, 10])  # Invalid index
 
     def test_remove_with_empty_indices(self):
-        # Test removing with empty index list, should act like remove()
-        self.root.remove([])  # Should remove both child1 and child2
-        self.assertEqual(len(self.root.subnodes), 0)  # Root should have no subnodes
+        self.root.remove([])  # Should remove nothing
+        self.assertEqual(len(self.root.subnodes), 2)
 
     def test_remove_subnodes_single_indices(self):
         # Creating a simple tree structure
@@ -693,7 +713,7 @@ class TestNode(unittest.TestCase):
         root.add_subnodes(child1, child2, child3)
 
         # Removing nodes at indices 0 and 2
-        root.remove_subnodes([0, 2])
+        root.remove([0, 2])
 
         # Verifying the tree structure after removal
         remaining_titles = [node.title for node in root.subnodes]
@@ -710,7 +730,7 @@ class TestNode(unittest.TestCase):
         root.add_subnodes(child1, child2)
 
         # Removing nodes at nested indices [0, 0] and [0, 1]
-        root.remove_subnodes([[0, 0], [0, 1]])
+        root.remove([[0, 0], [0, 1]])
 
         # Verifying the tree structure after removal
         remaining_titles = [node.title for node in root.get_node_by_index([0]).subnodes]
@@ -727,7 +747,7 @@ class TestNode(unittest.TestCase):
         root.add_subnodes(child1, child2)
 
         # Removing nodes at mixed indices [0, 1] and 1
-        root.remove_subnodes([[0, 1], 1])
+        root.remove([[0, 1], 1])
 
         # Verifying the tree structure after removal
         remaining_child_titles = [node.title for node in root.subnodes]

@@ -90,7 +90,7 @@ for node in root:
 - Nodes can be accessed using a list of indices through methods like `get_node_by_index()` and `set_current_node_by_index()`.
 - Index lists are relative to the node on which the method is called.
 
-### Removing Nodes: `remove()` and `remove_subnodes()`
+### Removing Nodes: `remove()`
 - The `remove()` method can take in a list of indices to remove a specific node or set of nodes.
 - Providing an empty list or calling `remove()` without arguments removes all subnodes.
 
@@ -251,7 +251,6 @@ class Node:
             - Sets the internal '_current_node' attribute to None. Note: 'current_node' is set to None after reset, and only calling 'root.next()' will set 'current_node' to 'root'.
             - Sets the 'reached_tree_end' flag to False.
             - Sets the 'reached_tree_start' flag to True.
-            - Resets '_insert_index' and '_remove_index' to None.
             - The reset is local to the node where the method is called and does not propagate to parent or child nodes.
 
         Examples:
@@ -274,8 +273,6 @@ class Node:
             # Demonstrate that the reset on 'child1' is local
             child1.next()  # Traverses 'current_node' to 'child1', the starting node
         """
-        self._insert_index = None
-        self._remove_index = None
         self._current_node = None
         self.reached_tree_end = False
         self.reached_tree_start = True
@@ -680,7 +677,7 @@ class Node:
             grandchild2 = Node("Grandchild2")
             child2.add_subnodes(grandchild2)
             root.add_subnodes(child1, child2)
-            
+
             # Set the current node to the end node
             end_node = root.end()  # Returns 'grandchild2'
         """
@@ -1058,7 +1055,7 @@ class Node:
             root = Node("Root", extra_field="extra_value")
             child1 = Node("Child1")
             root.add_subnodes(child1)
-            
+
             # Generate string representation
             repr_string = repr(root)  # Returns "llmmanugen.Node(Root subnodes=1 fields={'extra_field': 'extra_value'})"
         """
@@ -1080,33 +1077,50 @@ class Node:
 
     def remove(self, index=None):
         """
-        Remove a node based on its index path or clear all subnodes of the current node.
+        Remove a node based on its index path, multiple subnodes based on their indices or clear all subnodes of the current node.
 
         Parameters:
-            index (list|int, optional): An integer or list of integers specifying the index path to the node to remove. If omitted or an empty list is provided, all subnodes are cleared.
+            index (list|int, optional): List of indices or an integer specifying the subnodes to remove. Represents the index route to the target node(s).
 
-        Raises:
-            IndexError: If the index path is out of bounds.
+        Returns:
+            Node: The modified node, allowing for method chaining.
 
         Behavior:
             - If 'index' is provided, navigates to the specified node and removes it, along with its subnodes.
             - If 'index' is omitted or an empty list is given, clears all subnodes of the current node.
+            - Sorts the indices in reverse order to avoid index shifts during removal.
+            - Iterates through each index in the sorted list.
+            - Calls the 'remove' method for each index to remove the corresponding subnode.
 
         Examples:
-            1. To remove a specific subnode:
-                node.remove([0, 1])  # Removes the second child of the first child of 'node'.
-            2. To clear all subnodes:
+            1. To remove the first subnode:
+                node.remove(1)
+            2. To remove a specific subnodes:
+                node.remove([0, 1])  # Removes the first and the second subnodes.
+            3. To remove subnode from path:
+                node.remove([[0, 1]])  # Removes the second child of the first child of 'node'.
+            4. To clear all subnodes:
                 node.remove()
         """
-        if index:
+        if index is not None:
             if isinstance(index, int):
-                index = [index]
-            parent_node = self.get_node_by_index(index[:-1])
-            # Remove the node and its subnodes
-            del parent_node.subnodes[index[-1]]
+                del self.subnodes[index]
+                return self
+            else:
+                # Sorting index based on length and value, in reverse order
+                index.sort(key=lambda x: (len(x) if isinstance(x, list) else 0, x), reverse=True)
+
+            for idx in index:
+                if isinstance(idx, list):
+                    parent_node = self.get_node_by_index(idx[:-1])
+                    del parent_node.subnodes[idx[-1]]
+                else:
+                    del self.subnodes[idx]
         else:
             # Remove all subnodes
             self.subnodes = []
+
+        return self
 
     def add_subnodes(self, *nodes):
         """
@@ -1149,50 +1163,6 @@ class Node:
         """
         for node in nodes:
             self.insert_subnode(index, node)
-
-    def remove_subnodes(self, index=None):
-        """
-        Remove multiple subnodes based on their indices and return the modified node.
-
-        Parameters:
-            index (list|int, optional): List of indices or an integer specifying the subnodes to remove. Represents the index route to the target node(s).
-
-        Returns:
-            Node: The modified node, allowing for method chaining.
-
-        Behavior:
-            - Sorts the indices in reverse order to avoid index shifts during removal.
-            - Iterates through each index in the sorted list.
-            - Calls the 'remove' method for each index to remove the corresponding subnode.
-
-        Examples:
-            # Create root node and child nodes
-            root = Node("Root")
-            child1 = Node("Child1")
-            child2 = Node("Child2")
-            root.add_subnodes(child1, child2)
-
-            # Remove child nodes by their indices
-            root.remove_subnodes([0, 1])
-
-        Note:
-            - Indices are removed in reverse order to avoid altering the indices of the nodes yet to be removed.
-        """
-        index = self._remove_index if index is None else index
-        if isinstance(index, int):
-            index = [index]
-        else:
-            # Sorting index based on length and value, in reverse order
-            index.sort(key=lambda x: (len(x) if isinstance(x, list) else 0, x), reverse=True)
-
-        for idx in index:
-            if isinstance(idx, list):
-                parent_node = self.get_node_by_index(idx[:-1])
-                del parent_node.subnodes[idx[-1]]
-            else:
-                del self.subnodes[idx]
-
-        return self
 
     def __iter__(self):
         """
@@ -1348,42 +1318,110 @@ class Node:
         return results
 
     def __sub__(self, other):
-        if isinstance(other, int):
-            self._remove_index = other
-            self.remove_subnodes()
-            return self
+        """
+        Remove subnodes by index or list of indices.
+
+        Parameters:
+            other (Union[int, list]): The index or list of indices of subnodes to remove.
+
+        Returns:
+            Node: The modified Node object with the specified subnodes removed.
+
+        Raises:
+            TypeError: If the provided argument is not an integer or a list.
+
+        Behavior:
+            - Checks if `other` is an integer or a list.
+            - Calls the `remove` method to remove the subnode(s) at the specified index or indices.
+
+        Examples:
+            # Initialize a Node with subnodes
+            node = Node('Node1')
+            node.add_subnodes(Node('Child1'), Node('Child2'))
+
+            # Remove subnode by index
+            node - 0  # Removes the first subnode
+        """
+        if isinstance(other, int) or isinstance(other, list):
+            return self.remove(other)
         else:
             raise TypeError("Unsupported type for substraction")
 
-    def __isub__(self, other):
-        if isinstance(other, int):
-            self.remove_subnodes(other)
-        else:
-            raise TypeError("Unsupported type for in-place substraction")
-        return self
-    
-    def __iadd__(self, other):
-        return self.__add__(other)
-
     def __add__(self, other):
-        if isinstance(other, int):
-            self._insert_index = other
-            return self
+        """
+        Add subnodes to the Node.
+
+        Parameters:
+            other (Union[list, tuple, Node]): The subnode(s) to add.
+
+        Returns:
+            Node: The modified Node object with the new subnodes added.
+
+        Behavior:
+            - Checks if `other` is a list or a tuple.
+            - Calls `add_subnodes` if `other` is a list or tuple, otherwise calls `add_subnode`.
+
+        Examples:
+            # Initialize Nodes
+            node1 = Node('Node1')
+            node2 = Node('Node2')
+            node3 = Node('Node3')
+
+            # Add multiple subnodes
+            result1 = (node1 + node2) + node3  # Equivalent to node1.add_subnode(node2).add_subnode(node3)
+
+            # Reset node1 for the next example
+            node1 = Node('Node1')
+
+            # Different precedence
+            result2 = node1 + (node2 + node3)  # Equivalent to node2.add_subnode(node3), then node1.add_subnode(node2)
+
+            # Note: result1 and result2 will not be the same due to the different precedence in addition.
+        """
         if isinstance(other, list) or isinstance(other, tuple):
             self.add_subnodes(*other)
         else:
-            if self._insert_index is not None:
-                node = self.get_node_by_index(self._insert_index)
-                if node:
-                    node.add_subnode(other)
-                self._insert_index = None
-            else:
-                self.add_subnode(other)
+            self.add_subnode(other)
         return self
+
+    def __lt__(self, other):
+        """
+        Add a new subnode or multiple subnodes to the current node at the first subnode index using the '<' operator.
+
+        Parameters:
+            other (Node or list[Node] or tuple[Node]): The node(s) to add as subnodes.
+
+        Returns:
+            Node: The last added subnode.
+
+        Behavior:
+            - Checks the type of 'other' to determine if it's a single node or a list/tuple of nodes.
+            - Calls 'insert_subnode' if 'other' is a single node.
+            - Calls 'insert_subnodes' if 'other' is a list or tuple of nodes.
+            - Returns the last inserted subnode.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+
+            # Add a single subnode using the '<' operator
+            root < child1  # Returns 'child1'. Root has one child now.
+
+            # Add multiple subnodes using the '<' operator
+            child2 = Node("Child2")
+            child3 = Node("Child3")
+            last_added_node = root < [child2, child3]  # Returns 'child3'
+        """
+        if isinstance(other, list) or isinstance(other, tuple):
+            self.insert_subnodes(0, *other)
+        else:
+            self.insert_subnode(0, other)
+        return self.subnodes[0]
 
     def __gt__(self, other):
         """
-        Add a new subnode or multiple subnodes to the current node using the '>' operator.
+        Add (append) a new subnode or multiple subnodes to the current node at the last subnode index using the '>' operator.
 
         Parameters:
             other (Node or list[Node] or tuple[Node]): The node(s) to add as subnodes.
