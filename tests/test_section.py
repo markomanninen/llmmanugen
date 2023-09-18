@@ -21,7 +21,7 @@ class TestSection(unittest.TestCase):
         self.assertIsInstance(updated_format, datetime)
 
     def test_extra_item_property(self):
-        self.assertEqual(self.section._additional_fields.get("extra_item"), "foo")
+        self.assertEqual(self.section.fields.get("extra_item"), "foo")
         self.assertEqual(self.section["extra_item"], "foo")
         self.section["extra_item"] = "bar"
         self.assertEqual(self.section["extra_item"], "bar")
@@ -69,7 +69,21 @@ class TestSection(unittest.TestCase):
     def test_getitem_method(self):
         self.assertEqual(self.section['title'], "Introduction")
         self.assertEqual(self.section['summary'], "A brief intro")
-        self.assertEqual(self.section['nonexistent'], None)
+
+        # self.section.nonexistent
+        self.assertEqual(getattr(self.section, "nonexistent", None), None)
+        try:
+            self.section.nonexistent
+        except AttributeError:
+            pass
+
+        # self.section["nonexistent"]
+        self.assertEqual(self.section.__dict__.get('nonexistent', None), None)
+        self.assertEqual(self.section.fields.get('nonexistent', None), None)
+        try:
+            self.section["nonexistent"]
+        except KeyError:
+            pass
 
     def test_setitem_method(self):
         self.section['title'] = "Set via item"

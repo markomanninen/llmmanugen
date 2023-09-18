@@ -27,7 +27,6 @@ class Section(Node):
         prompt: Gets or sets the prompt of the section.
 
     Subscriptable:
-        __getitem__(key): Retrieve an attribute value using a key.
         __setitem__(key, value): Set an attribute value using a key.
     """
     def __init__(self, title, *nodes, summary=None, content=None, prompt=None, completed=None, created=None, updated=None, **kwargs):
@@ -52,7 +51,7 @@ class Section(Node):
                 for subnode in node.subnodes:
                     traverse(subnode)
             return node
-        super().__init__(title, *(traverse(node) for node in nodes))
+        super().__init__(title, *(traverse(node) for node in nodes), **kwargs)
         self._summary = summary if summary else ""
         self._content = content if content else ""
         self._prompt = prompt
@@ -60,7 +59,7 @@ class Section(Node):
         self._created = created if created else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self._updated = updated if updated else self._created
         # Note: Not used for any particular case so far.
-        self._additional_fields = kwargs
+        #self._additional_fields = kwargs
 
     def update(self, title=None, summary=None, content=None, prompt=None, completed=False):
         """
@@ -216,18 +215,6 @@ class Section(Node):
                 letters_count += letter_count
         return words_count, letters_count
 
-    def __getitem__(self, key):
-        """
-        Retrieves an attribute by key name. Returns None if the attribute does not exist.
-
-        Parameters:
-            key (str): The name of the attribute to retrieve.
-
-        Returns:
-            The value of the attribute if it exists, None otherwise.
-        """
-        return getattr(self, key, self._additional_fields.get(key, None))
-
     def __setitem__(self, key, value):
         """
         Sets an attribute by key name and updates the timestamp if the attribute exists.
@@ -239,6 +226,6 @@ class Section(Node):
         if hasattr(self, key):
             setattr(self, key, value)
             self._update_timestamp()
-        elif key in self._additional_fields:
-            self._additional_fields[key] = value
+        elif key in self.fields:
+            self.fields[key] = value
             self._update_timestamp()

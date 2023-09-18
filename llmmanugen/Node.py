@@ -228,6 +228,9 @@ class Node:
         """
         return len(self.subnodes) > 0
 
+    def get_subnodes(self):
+        return self.subnodes
+
     def peak_next(self):
         """
         Peeks at the next node in the tree traversal without actually moving to it.
@@ -590,6 +593,12 @@ class Node:
                 target = root._current_node
         return root, target
 
+    def get_current_node(self):
+        return self._current_node
+
+    def get_parent(self):
+        return self._parent
+
     def get_current_node_index(self, from_root=True):
         """
         Retrieves the index path of the current node based on the 'from_root' parameter.
@@ -664,20 +673,20 @@ class Node:
         """
         return self._title if self._title else f"Node-{self._id} (ID: {id(self)})"
 
-    def remove(self, indices=None):
+    def remove(self, index=None):
         """
         Removes a node based on its index path or all subnodes of the current node.
 
         Parameters:
-            indices (list, optional): A list of integers representing the index path to the node to be removed.
-                                      If not provided or empty list is given, all subnodes of the current node will be removed.
+            index (list|int, optional): An integer or a list of integers representing the index path to the node to be removed.
+                                        If not provided or empty list is given, all subnodes of the current node will be removed.
 
         Raises:
             IndexError: If the index path is out of bounds.
 
         Logic Explained:
-            - If 'indices' is provided, navigates to the specified node and removes it along with its subnodes.
-            - If 'indices' is not provided, removes all subnodes of the current node.
+            - If 'index' is provided, navigates to the specified node and removes it along with its subnodes.
+            - If 'index' is not provided, removes all subnodes of the current node.
 
         Examples:
             1. To remove a specific subnode:
@@ -685,14 +694,13 @@ class Node:
 
             2. To remove all subnodes of the current node:
                 node.remove()
-
         """
-        if indices:
-            parent_node = self
-            for i in indices[:-1]:
-                parent_node = parent_node.subnodes[i]
+        if index:
+            if isinstance(index, int):
+                index = [index]
+            parent_node = self.get_node_by_index(index[:-1])
             # Remove the node and its subnodes
-            del parent_node.subnodes[indices[-1]]
+            del parent_node.subnodes[index[-1]]
         else:
             # Remove all subnodes
             self.subnodes = []
@@ -732,16 +740,15 @@ class Node:
         for node in nodes:
             self.insert_subnode(index, node)
 
-    def remove_subnodes(self, indices_list=None):
+    def remove_subnodes(self, index=None):
         """
         Removes multiple subnodes from the current node's list of subnodes based on their indices.
 
         Parameters:
-            indices_list (list): List of indices or index paths to remove. An index path is a list of integers
-                                  representing the index route to the target node.
+            index (list|int): List of indices or an integer to remove. They represent the index route to the target node.
 
         Logic Explained:
-            - Sorts the indices_list in reverse order to avoid index shifts during removal.
+            - Sorts the index in reverse order to avoid index shifts during removal.
             - Iterates through each index in the sorted list.
             - Calls the 'remove' method for each index to remove the corresponding subnode.
 
@@ -758,19 +765,19 @@ class Node:
         Note:
             - Indices are removed in reverse order to avoid messing up the indices of the nodes that are yet to be removed.
         """
-        indices_list = self._remove_index if indices_list is None else indices_list
-        if isinstance(indices_list, int):
-            indices_list = [indices_list]
+        index = self._remove_index if index is None else index
+        if isinstance(index, int):
+            index = [index]
         else:
-            # Sorting indices_list based on length and value, in reverse order
-            indices_list.sort(key=lambda x: (len(x) if isinstance(x, list) else 0, x), reverse=True)
+            # Sorting index based on length and value, in reverse order
+            index.sort(key=lambda x: (len(x) if isinstance(x, list) else 0, x), reverse=True)
 
-        for index in indices_list:
-            if isinstance(index, list):
-                node_to_remove = self.get_node_by_index(index[:-1])
-                del node_to_remove.subnodes[index[-1]]
+        for idx in index:
+            if isinstance(idx, list):
+                parent_node = self.get_node_by_index(idx[:-1])
+                del parent_node.subnodes[idx[-1]]
             else:
-                del self.subnodes[index]
+                del self.subnodes[idx]
 
         return self
 
@@ -802,10 +809,10 @@ class Node:
             2. If the next node is None (end of the tree), raise StopIteration.
             3. Otherwise, returns the next node.
         """
-        next_node = self.next()
-        if next_node is None:
+        node = self.next()
+        if node is None:
             raise StopIteration
-        return next_node
+        return node
 
     def search(self, query, path=None):
         """
@@ -820,7 +827,7 @@ class Node:
         """
         results = []
 
-        def _(subnodes, new_path=[]):
+        def traverse(subnodes, new_path=[]):
             for i, node in enumerate(subnodes):
                 local_path = new_path + [i]
                 if ((isinstance(query, str) and query.lower() in node.title.lower()) or
@@ -828,33 +835,34 @@ class Node:
                     if path is None or path == local_path[:len(path)]:
                         results.append((node, local_path))
                 if node.has_subnodes():
-                    _(node.subnodes, local_path)
-        _(self.subnodes)
+                    traverse(node.subnodes, local_path)
+        traverse(self.subnodes)
         return results
 
-    def find_path_by_titles(self, field_values):
+    def find_path_by_titles(self, titles):
         """
         Find nodes whose titles match the given list of field values.
 
         Parameters:
-            - field_values (list or str): A list of field values to match against node titles.
+            - titles (list or str): A list of field values to match against node titles.
 
         Returns:
             list: A list of tuples, each containing a node and its path that matches the field values.
         """
-        if not isinstance(field_values, list):
-            field_values = [field_values]
+        if not isinstance(titles, list):
+            titles = [titles]
+
         results = []
 
-        def _(subnodes, remaining_fields, new_path=[]):
+        def traverse(subnodes, remaining_titles, new_path=[]):
             for i, node in enumerate(subnodes):
-                if remaining_fields and node.title == remaining_fields[0]:
+                if remaining_titles and node.title == remaining_titles[0]:
                     local_path = new_path + [i]
-                    if len(remaining_fields) == 1:
+                    if len(remaining_titles) == 1:
                         results.append((node, local_path))
                     if node.has_subnodes():
-                        return _(node.subnodes, remaining_fields[1:], local_path)
-        _(self.subnodes, field_values)
+                        return traverse(node.subnodes, remaining_titles[1:], local_path)
+        traverse(self.subnodes, titles)
         return results
 
     def __sub__(self, other):
@@ -900,3 +908,19 @@ class Node:
         else:
             self.add_subnode(other)
         return self.subnodes[-1]
+
+    def __getattr__(self, key):
+        if key in self.__dict__:
+            return self.__getitem__(key)
+        elif key in self.fields:
+            return self.fields[key]
+        else:
+             raise AttributeError(f"Attribute '{key}' not found from the Node attributes or fields")
+
+    def __getitem__(self, key):
+        if hasattr(self, key):
+            return getattr(self, key)
+        elif key in self.fields:
+            return self.fields[key]
+        else:
+            raise KeyError(f"Key '{key}' not found from the Node attributes or fields")

@@ -173,18 +173,6 @@ Generates and returns a comprehensive table of contents for the manuscript.
 
 - `str`: A Markdown-formatted string representing the table of contents, including titles, subtitles, authors, and content.
 
-### `__getattr__`
-
-Custom attribute getter that first tries to get the attribute using the superclass's method. If not found, it looks in the `additional_fields` dictionary.
-
-#### Parameters
-
-- `name` (str): The name of the attribute to get.
-
-#### Returns
-
-- The value of the attribute, or None if the attribute is not found.
-
 ### `from_json`
 
 Initializes a Manuscript object from a JSON-formatted string.
@@ -385,20 +373,8 @@ class Manuscript(Section):
         Returns:
             None: This method initializes the instance and does not return a value.
         """
-        super().__init__(kwargs.get("title", "Untitled"), *sections)
-        self._init(**kwargs)
-
-    def _init(self, **kwargs):
-        """
-        Initialize additional fields for the Manuscript instance.
-
-        Parameters:
-            - **kwargs: Additional keyword arguments to set as attributes.
-
-        Returns:
-            None: This method initializes additional fields and does not return a value.
-        """
-        self.additional_fields = kwargs
+        title = kwargs.get("title", "Untitled")
+        super().__init__(title, *sections, **{k: v for k, v in kwargs.items() if k != "title"})
 
     def add_section(self, section=None, **kwargs):
         """Adds one Section/dictionary object to the manuscript.
@@ -702,22 +678,6 @@ class Manuscript(Section):
         traverse(self)
         return '\n'.join(contents)
 
-    def __getattr__(self, name):
-        """
-        Custom attribute getter that first tries to get the attribute using the superclass's method.
-        If not found, it looks in the additional_fields dictionary.
-
-        Parameters:
-            - name (str): The name of the attribute to get.
-
-        Returns:
-            The value of the attribute, or None if the attribute is not found.
-        """
-        try:
-            return super().__getattr__(name)
-        except AttributeError:
-            return self.additional_fields.get(name, None)
-
     @classmethod
     def from_dictionary(cls, data_dict):
         """
@@ -833,7 +793,7 @@ class Manuscript(Section):
             'author': self.author,
             'created': created,
             'updated': self.updated or created,
-            'guidelines': self.guidelines or {},
-            'constraints': self.constraints or {},
+            'guidelines': getattr(self, "guidelines", {}),
+            'constraints': getattr(self, "constraints", {}),
             'sections': [traverse(section) for section in self.subnodes]
         }

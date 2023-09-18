@@ -14,7 +14,7 @@ class TestManuscript(unittest.TestCase):
         self.assertEqual(self.manuscript.title, "My Manuscript")
         self.assertEqual(self.manuscript.subtitle, "An Adventure")
         self.assertEqual(self.manuscript.author, "John Doe")
-        self.assertIsInstance(self.manuscript.additional_fields, dict)
+        self.assertIsInstance(self.manuscript.fields, dict)
 
     def test_add_section(self):
         new_section = Section("Conclusion", summary="End", content="Goodbye", prompt="The End")

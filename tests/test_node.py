@@ -40,8 +40,8 @@ class TestNode(unittest.TestCase):
 
     def test_init(self):
         node = Node("Test")
-        self.assertEqual(node._title, "Test")
-        self.assertEqual(node._parent, None)
+        self.assertEqual(node.title, "Test")
+        self.assertEqual(node.parent, None)
         self.assertEqual(node.subnodes, [])
         self.assertEqual(node.current_node, None)
         self.assertEqual(node.reached_tree_end, False)
@@ -54,6 +54,24 @@ class TestNode(unittest.TestCase):
     def test_fields(self):
         node = Node(**{"title": "Node", "subnodes": [], "foo": "bar"})
         self.assertEqual(node.fields, {"foo": "bar"})
+        self.assertEqual(node.fields["foo"], "bar")
+        # Shortcuts
+        self.assertEqual(node["foo"], "bar")
+        self.assertEqual(node.foo, "bar")
+    
+    def test_non_existing_attribute(self):
+        node = Node()
+        try:
+            print("non_existing_attribute", node.non_existing_attribute)
+        except AttributeError:
+            pass
+    
+    def test_non_existing_key(self):
+        node = Node()
+        try:
+            print("non_existing_key", node["non_existing_attribute"])
+        except KeyError:
+            pass
     
     def test_repr(self):
         node = Node(**{"subnodes": [Node()], "foo": "bar"})
@@ -94,7 +112,7 @@ class TestNode(unittest.TestCase):
         new_node = Node("NewNode")
         self.root.add_subnode(new_node)
         self.assertIn(new_node, self.root.subnodes)
-        self.assertEqual(new_node._parent, self.root)
+        self.assertEqual(new_node.parent, self.root)
 
     def test_set_subnode(self):
         self.root.add_subnode(Node("Child3"))
@@ -645,7 +663,7 @@ class TestNode(unittest.TestCase):
         root.remove_subnodes([0, 2])
 
         # Verifying the tree structure after removal
-        remaining_titles = [node._title for node in root.subnodes]
+        remaining_titles = [node.title for node in root.subnodes]
         self.assertEqual(remaining_titles, ["Child2"])
 
     def test_remove_subnodes_nested_indices(self):
@@ -662,7 +680,7 @@ class TestNode(unittest.TestCase):
         root.remove_subnodes([[0, 0], [0, 1]])
 
         # Verifying the tree structure after removal
-        remaining_titles = [node._title for node in root.get_node_by_index([0]).subnodes]
+        remaining_titles = [node.title for node in root.get_node_by_index([0]).subnodes]
         self.assertEqual(remaining_titles, [])
 
     def test_remove_subnodes_mixed_indices(self):
@@ -679,10 +697,10 @@ class TestNode(unittest.TestCase):
         root.remove_subnodes([[0, 1], 1])
 
         # Verifying the tree structure after removal
-        remaining_child_titles = [node._title for node in root.subnodes]
+        remaining_child_titles = [node.title for node in root.subnodes]
         self.assertEqual(remaining_child_titles, ["Child1"])
 
-        remaining_grandchild_titles = [node._title for node in root.get_node_by_index([0]).subnodes]
+        remaining_grandchild_titles = [node.title for node in root.get_node_by_index([0]).subnodes]
         self.assertEqual(remaining_grandchild_titles, ["Grandchild1"])
 
     def test_iteration(self):

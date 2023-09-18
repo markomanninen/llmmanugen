@@ -23,6 +23,8 @@ class TestManuscriptConversionMethods(unittest.TestCase):
         self.assertTrue(manuscript1.to_dictionary() == manuscript2.to_dictionary())
         self.assertTrue(manuscript1.title == "My Manuscript")
         self.assertTrue(manuscript1.title == manuscript2.title)
+        self.assertTrue(manuscript1.author == "John Doe")
+        self.assertTrue(manuscript1.author == manuscript2.author)
 
     def test_from_json(self):
         json_str = json.dumps({

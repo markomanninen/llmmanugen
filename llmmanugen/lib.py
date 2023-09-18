@@ -125,7 +125,7 @@ def parse_dictionary_to_manuscript(manuscript_instance, data):
         return section_objects
 
     manuscript_instance.title = data.get("title", "Untitled")
-    manuscript_instance._init(**{k: v for k, v in data.items() if k not in ["title", "sections"]})
+    manuscript_instance.fields = {k: v for k, v in data.items() if k not in ["title", "sections"]}
 
     if "sections" in data:
         manuscript_instance.add_sections(*dictionary_to_sections(data["sections"]))
