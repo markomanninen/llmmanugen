@@ -268,12 +268,26 @@ class Node:
     def get_subnodes(self):
         return self.subnodes
 
-    def peak_next(self):
+    def peek_next(self):
         """
-        Peeks at the next node in the tree traversal without actually moving to it.
+        Peek at the next node in the tree traversal without actually moving to it.
 
         Returns:
-            Section: The next Section object in the tree traversal, or None if the end of the tree has been reached.
+            Node or None: The next node in the depth-first traversal, or None if the end of the tree is reached.
+
+        Behavior:
+            - Checks the 'reached_tree_end' flag. If True, returns None.
+            - Calls the 'next' method to get the next node.
+            - Immediately calls the 'prev' method to revert the traversal, ensuring the current node remains unchanged.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+            # Peek at the next node without moving
+            next_node_peek = root.peek_next()  # Returns the root node on the first call if 'current_node' is None
         """
         if self.reached_tree_end:
             return None
@@ -282,12 +296,29 @@ class Node:
             self.prev()
         return node
 
-    def peak_prev(self):
+    def peek_prev(self):
         """
-        Peeks at the previous node in the tree traversal without actually moving to it.
+        Peek at the previous node in the tree traversal without actually moving to it.
 
         Returns:
-            Section: The previous Section object in the tree traversal, or None if the start of the tree has been reached.
+            Node or None: The previous node in the depth-first traversal, or None if the start of the tree is reached.
+
+        Behavior:
+            - Checks the 'reached_tree_start' flag. If True, returns None.
+            - Calls the 'prev' method to get the previous node.
+            - Immediately calls the 'next' method to revert the traversal, ensuring the current node remains unchanged.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node("Root")
+            child1 = Node("Child1")
+            child2 = Node("Child2")
+            root.add_subnodes(child1, child2)
+            # Traverse to the end of the tree
+            while root.next():
+                pass
+            # Peek at the previous node without moving
+            prev_node_peek = root.peek_prev()  # Returns the last node in the tree on the first call
         """
         if self.reached_tree_start:
             return None
@@ -401,6 +432,24 @@ class Node:
         return self
 
     def set_subnode(self, index_list, node=None, **kwargs):
+        """
+        Replace a subnode at a specified index with a new node and return the modified node.
+
+        Parameters:
+            index_list (int or list[int]): The index or list of indices specifying the subnode to replace.
+            node (Node, optional): An existing Node instance to set as the new subnode. If None, a new node will be created based on the **kwargs.
+            **kwargs: Optional parameters in dictionary format for creating a new node. Can include 'title', 'subnodes', and any extra fields.
+
+        Returns:
+            Node: The modified node, allowing for method chaining.
+
+        Behavior:
+            - Calls the private '_modify_subnodes' method with the following arguments:
+                1. A list containing the index or indices for the subnode to replace.
+                2. The operation type ('set' in this case).
+                3. The Node instance to set, either provided or created from **kwargs.
+            - Replaces the existing subnode at the specified index with the new node.
+        """
         return self._modify_subnodes([index_list] if isinstance(index_list, int) else index_list, 'set', node, **kwargs)
 
     def insert_subnode(self, index_list, node=None, **kwargs):
@@ -446,20 +495,27 @@ class Node:
 
     def next(self):
         """
-        Navigate to the next node in a depth-first traversal of the tree.
-
-        Resets the reached_tree_start flag to False since we are moving forward.
+        Navigate to the next node in a depth-first traversal of the tree and return it.
 
         Returns:
-            Node or None: The next node in the depth-first traversal, or None if
-            reached the end of the tree.
+            Node or None: The next node in the depth-first traversal, or None if the end of the tree is reached.
 
         Behavior:
-            1. If reached_tree_end is True, returns None.
-            2. If the current node has subnodes, moves to the first subnode.
-            3. If the current node has no subnodes, moves to the next sibling.
-            4. If there is no next sibling, traverses up the tree to find an ancestor
-               with an unvisited sibling, or sets reached_tree_end to True if none found.
+            - Initially, the 'current_node' is None. After the first call to 'next', it becomes the root node.
+            - Resets the 'reached_tree_start' flag to False, as the traversal moves forward.
+            - If 'reached_tree_end' is True, returns None.
+            - If the current node has subnodes, moves to the first subnode.
+            - If the current node has no subnodes, moves to the next sibling.
+            - If there is no next sibling, traverses up the tree to find an ancestor with an unvisited sibling. Sets 'reached_tree_end' to True if none is found.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node('Root')
+            child1 = Node('Child1')
+            child2 = Node('Child2')
+            root.add_subnodes(child1, child2)
+            # Traverse the tree using the 'next' method
+            next_node = root.next()  # Returns the root node on the first call
         """
         # Reset the flag since we are going forwards.
         self.reached_tree_start = False
@@ -489,19 +545,29 @@ class Node:
 
     def prev(self):
         """
-        Navigate to the previous node in a depth-first traversal of the tree.
-
-        Resets the reached_tree_end flag to False since we are moving backward.
+        Navigate to the previous node in a depth-first traversal of the tree and return it.
 
         Returns:
-            Node or None: The previous node in the depth-first traversal, or None if
-            reached the start of the tree.
+            Node or None: The previous node in the depth-first traversal, or None if the start of the tree is reached.
 
         Behavior:
-            1. If reached_tree_start is True, returns None.
-            2. If the current node is not the first sibling, moves to the previous sibling.
-            3. If it is the first sibling, moves to the parent node.
-            4. If there is no parent (i.e., the node is the root), sets reached_tree_start to True.
+            - Resets the 'reached_tree_end' flag to False, as the traversal moves backward.
+            - If 'reached_tree_start' is True or the 'current_node' is None, returns None and sets 'reached_tree_start' to True.
+            - If the current node is not the first sibling, moves to the previous sibling and navigates to its last descendant.
+            - If it is the first sibling, moves to the parent node.
+            - If there is no parent (i.e., the node is the root), sets 'reached_tree_start' to True.
+
+        Examples:
+            # Initialize a tree with root and child nodes
+            root = Node('Root')
+            child1 = Node('Child1')
+            child2 = Node('Child2')
+            root.add_subnodes(child1, child2)
+            # Traverse to the end of the tree
+            while root.next():
+                pass
+            # Traverse the tree using the 'prev' method
+            prev_node = root.prev()  # Returns the last node in the tree on the first call
         """
         # Reset the flag since we are going backwards.
         self.reached_tree_end = False

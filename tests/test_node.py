@@ -778,3 +778,12 @@ class TestNode(unittest.TestCase):
         self.assertEqual(result[0][0].title, "Grandchild")
         self.assertEqual(result[0][1], [0, 0])
         self.assertEqual(result[1][1], [0, 1])
+    
+    def test_peek_next(self):
+        self.root.next()
+        self.assertEqual(str(self.root.peek_next()), "Child1")
+
+    def test_peek_prev(self):
+        while self.root.next():
+            pass
+        self.assertEqual(str(self.root.peek_prev()), "Grandchild2")
