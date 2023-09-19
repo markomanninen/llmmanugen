@@ -493,7 +493,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(self.child2.get_end_node(True), child3.subnodes[0])
 
     def test_pretty_print(self):
-        print("Test pretty_print output:")
+        print("\nTest pretty_print output:")
         self.root.pretty_print()
 
     def test_next_method_called_by_subnode(self):

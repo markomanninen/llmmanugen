@@ -1,6 +1,5 @@
 import re
 from datetime import datetime
-from .Section import Section
 
 
 def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="content"):
@@ -34,6 +33,9 @@ def parse_markdown_to_manuscript(manuscript_instance, md_text, content_field="co
         - The number of '#' characters indicates the nesting level of the section.
         - Lines not starting with '#' characters are considered content for the most recently defined section.
     """
+
+    from .Section import Section
+
     lines = md_text.strip().split('\n')
     manuscript_title = lines[0].replace('# ', '')
     manuscript_instance.title = manuscript_title
@@ -92,6 +94,9 @@ def parse_dictionary_to_manuscript(manuscript_instance, data):
     Returns:
         Manuscript: The populated Manuscript instance.
     """
+
+    from .Section import Section
+
     def dictionary_to_sections(sections):
 
         """
@@ -108,10 +113,10 @@ def parse_dictionary_to_manuscript(manuscript_instance, data):
 
             created = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             kwdict = {
-                'summary': section.get('summary', ''),
-                'content': section.get('content', ''),
+                'summary': section.get('summary', None),
+                'content': section.get('content', None),
                 'prompt': section.get('prompt', None),
-                'completed': section.get('completed', ''),
+                'completed': section.get('completed', None),
                 'created': section.get('created', created),
                 'updated': section.get('updated', section.get('created', created))
             }
@@ -131,3 +136,21 @@ def parse_dictionary_to_manuscript(manuscript_instance, data):
         manuscript_instance.add_sections(*dictionary_to_sections(data["sections"]))
 
     return manuscript_instance
+
+
+def check_valid_datetime(s, format='%Y-%m-%d %H:%M:%S'):
+    """
+    Check if a given string is a valid datetime according to a specified format or if it's None.
+    
+    Parameters:
+        s (str or None): The string to check, or None.
+        format (str, optional): The datetime format to match against. Defaults to '%Y-%m-%d %H:%M:%S'.
+    
+    Returns:
+        bool: True if the string is a valid datetime or None, raises ValueError otherwise.
+    """
+    if s is not None:
+        try:
+            datetime.strptime(s, format)
+        except ValueError:
+            raise ValueError(f"The string does not match the format {format}")

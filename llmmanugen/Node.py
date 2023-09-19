@@ -442,7 +442,7 @@ class Node:
 
             # Retrieve the title
             title = node.get_title()  # Returns 'Node1'
-    """
+        """
         return self._title
     
     def get_fields(self):
@@ -461,7 +461,7 @@ class Node:
 
             # Retrieve the fields
             fields = node.get_fields()  # Returns {'extra_field': 'extra_value'}
-    """
+        """
         return self.fields
 
     @property

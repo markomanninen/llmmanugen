@@ -317,7 +317,7 @@ These examples demonstrate the various functionalities provided by the `Manuscri
 import json
 from datetime import datetime
 from .Section import Section
-from .lib import parse_markdown_to_manuscript, parse_dictionary_to_manuscript
+from .lib import parse_markdown_to_manuscript, parse_dictionary_to_manuscript, check_valid_datetime
 
 
 class Manuscript(Section):
@@ -458,11 +458,12 @@ class Manuscript(Section):
             },
             'next': (lambda x: {"title": x.title, "prompt": x.prompt} if x else None)(self.peak_next())
         }
-        if general_instructions:
-            result["general_instructions"] = {
-                "guidelines": self.guidelines,
-                "constraints": self.constraints
-            }
+        if general_instructions and (hasattr(self, "guidelines") or hasattr(self, "constraints")):
+            result["general_instructions"] = {}
+            if hasattr(self, "guidelines"):
+                result["general_instructions"]["guidelines"] = getattr(self, "guidelines")
+            if hasattr(self, "constraints"):
+                result["general_instructions"]["constraints"] = getattr(self, "constraints")
         return result
 
     def set_and_get_current_section_by_index(self, index):
@@ -551,13 +552,14 @@ class Manuscript(Section):
         """
         self.get_current_section().title = title
 
-    def set_current_completed(self, completed=True):
+    def set_current_completed(self, completed):
         """
         Sets the completion status of the current section.
 
         Parameters:
-        - completed (bool): The new completion status to set for the current section. Default is True.
+        - completed (str): The new completion status to set for the current section. Default is True.
         """
+        check_valid_datetime(completed)
         self.get_current_section().completed = completed
 
     def set_current_prompt(self, prompt):

@@ -643,7 +643,35 @@ class Prompt(dict):
         # Other keys are left out
 
     def __repr__(self):
-        return f"Prompt(directives={self.get('directives', {})}, guidelines={self.get('guidelines', {})}, constraints={self.get('constraints', {})})"
+        """
+        Returns the official string representation of the Prompt object.
+        Only includes attributes that are actually present in the dictionary.
+        
+        Returns:
+            str: The official string representation of the object.
+        """
+        parts = []
+        if 'directives' in self:
+            parts.append(f"directives={self['directives']}")
+        if 'guidelines' in self:
+            parts.append(f"guidelines={self['guidelines']}")
+        if 'constraints' in self:
+            parts.append(f"constraints={self['constraints']}")
+        return f"Prompt({', '.join(parts)})"
 
     def __str__(self):
-        return f"Prompt(directives: {self.get('directives', {})}, guidelines: {self.get('guidelines', {})}, constraints: {self.get('constraints', {})})"
+        """
+        Returns the informal string representation of the Prompt object.
+        Only includes attributes that are actually present in the dictionary.
+        
+        Returns:
+            str: The informal string representation of the object.
+        """
+        parts = []
+        if 'directives' in self:
+            parts.append(f"directives: {self['directives']}")
+        if 'guidelines' in self:
+            parts.append(f"guidelines: {self['guidelines']}")
+        if 'constraints' in self:
+            parts.append(f"constraints: {self['constraints']}")
+        return f"Prompt({', '.join(parts)})"
